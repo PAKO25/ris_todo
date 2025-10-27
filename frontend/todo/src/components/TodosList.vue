@@ -2,9 +2,11 @@
 import { onMounted, ref } from 'vue'
 
 const userId = "1" // hardcoded for now
-import { fetchTodos, deleteTodo, todos, updateTodo } from '@/composables/useTodos'
+import { fetchTodos, deleteTodo, todos, updateTodo, currentPage } from '@/composables/useTodos'
 
-onMounted(() => fetchTodos(userId))
+const pageSize: number = 4;
+
+onMounted(() => fetchTodos(userId, currentPage.value * pageSize, pageSize))
 
 const editingTodoId = ref<number>(0)
 const title = ref('')
@@ -20,6 +22,17 @@ function changeEditingTodo(id: number, todoTitle: string, todoDescription: strin
   title.value = todoTitle
   description.value = todoDescription
 }
+
+function nextPage() {
+  currentPage.value++
+  fetchTodos(userId, currentPage.value * pageSize, pageSize)
+}
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--
+    fetchTodos(userId, currentPage.value * pageSize, pageSize)
+  }
+}
 </script>
 
 
@@ -28,7 +41,8 @@ function changeEditingTodo(id: number, todoTitle: string, todoDescription: strin
     <li v-for="todo in todos" :key="todo[0]" class="todo-item">
       <strong>{{ todo[1] }}</strong>
       <p>{{ todo[2] }}</p>
-      <button @click="deleteTodo(todo[0], userId)">Delete</button> <button @click="changeEditingTodo(todo[0], todo[1], todo[2])">Edit</button>
+      <button @click="deleteTodo(todo[0], userId)">Delete</button> <button
+        @click="changeEditingTodo(todo[0], todo[1], todo[2])">Edit</button>
       <div v-if="editingTodoId === todo[0]">
         <input v-model="title" type="text" />
         <input v-model="description" type="text" />
@@ -37,4 +51,15 @@ function changeEditingTodo(id: number, todoTitle: string, todoDescription: strin
     </li>
   </ul>
   <p v-else>No todos found</p>
+  <div class="inline_class">
+    <button @click="prevPage">Previous</button>
+    <p>Page {{ currentPage + 1 }}</p>
+    <button @click="nextPage">Next</button>
+  </div>
 </template>
+
+<style scoped>
+.inline_class {
+  display: flex;
+}
+</style>

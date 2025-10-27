@@ -1,10 +1,11 @@
 import { ref } from 'vue'
 
 const todos = ref<Array<[number, string, string]>>([])
+const currentPage = ref(0);
 
-async function fetchTodos(userId: string) {
+async function fetchTodos(userId: string, startIndex: number = currentPage.value, size: number = 4) {
   try {
-    const res = await fetch(`/api/v1/getTodos/${userId}`)
+    const res = await fetch(`/api/v1/getTodos/${userId}/${startIndex}/${size}`)
     if (!res.ok) throw new Error(await res.text())
     todos.value = await res.json()
   } catch (err) {
@@ -54,4 +55,4 @@ async function updateTodo(id: number, title: string, description: string, userId
   }
 }
 
-export { todos, fetchTodos, deleteTodo, addTodo, updateTodo }
+export { todos, fetchTodos, deleteTodo, addTodo, updateTodo, currentPage }

@@ -35,6 +35,23 @@ public class TodoHandler {
                 .getResultList();
     }
 
+
+    @Operation(summary = "Get todos from index to index")
+    @GetMapping("/getTodos/{userId}/{startIndex}/{size}")
+    public List getTodosInRange(@PathVariable("userId") String userId,
+                                @PathVariable("startIndex") int startIndex,
+                                @PathVariable("size") int size) {
+        String sql = "SELECT id, title, description FROM todos WHERE user_id = :userId ORDER BY id";
+
+        var query = entityManager.createNativeQuery(sql)
+                .setParameter("userId", userId);
+        query.setFirstResult(startIndex);
+        query.setMaxResults(size);
+
+        return query.getResultList();
+    }
+
+
     @PostMapping("/addTodo")
     @Transactional
     @Operation(summary = "Add a new todo")
