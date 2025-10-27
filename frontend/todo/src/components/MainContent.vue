@@ -6,6 +6,7 @@ import AddTodo from './AddTodo.vue';
 <template>
   <div>
     <h1>Todo List</h1>
+    <hr />
     <TodosList />
     <AddTodo />
   </div>

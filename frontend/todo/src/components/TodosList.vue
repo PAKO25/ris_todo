@@ -2,11 +2,9 @@
 import { onMounted, ref } from 'vue'
 
 const userId = "1" // hardcoded for now
-import { fetchTodos, deleteTodo, todos, updateTodo, currentPage } from '@/composables/useTodos'
+import { fetchTodos, deleteTodo, todos, updateTodo, currentPage, pageSize } from '@/composables/useTodos'
 
-const pageSize: number = 4;
-
-onMounted(() => fetchTodos(userId, currentPage.value * pageSize, pageSize))
+onMounted(() => fetchTodos(userId, currentPage.value * pageSize.value, pageSize.value))
 
 const editingTodoId = ref<number>(0)
 const title = ref('')
@@ -25,12 +23,12 @@ function changeEditingTodo(id: number, todoTitle: string, todoDescription: strin
 
 function nextPage() {
   currentPage.value++
-  fetchTodos(userId, currentPage.value * pageSize, pageSize)
+  fetchTodos(userId, currentPage.value * pageSize.value, pageSize.value)
 }
 function prevPage() {
   if (currentPage.value > 0) {
     currentPage.value--
-    fetchTodos(userId, currentPage.value * pageSize, pageSize)
+    fetchTodos(userId, currentPage.value * pageSize.value, pageSize.value)
   }
 }
 </script>
@@ -50,11 +48,13 @@ function prevPage() {
       </div>
     </li>
   </ul>
-  <p v-else>No todos found</p>
+  <p v-else>You are caught up!</p>
   <div class="inline_class">
     <button @click="prevPage">Previous</button>
     <p>Page {{ currentPage + 1 }}</p>
     <button @click="nextPage">Next</button>
+    <p>Page size: </p>
+    <input type="number" v-model="pageSize" min="1" @change="() => fetchTodos(userId, currentPage * pageSize, pageSize)" />
   </div>
 </template>
 
