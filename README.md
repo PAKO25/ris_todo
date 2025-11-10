@@ -1,5 +1,5 @@
 ## Informacije za razvijalce
-V mapi frontend je *vue+vite* projekt. V mapi backend je *SpringBoot* projekt.
+V mapi frontend je *vue+vite* projekt (vue 3.5, vite 7.1). V mapi backend je *SpringBoot* (3.5) projekt. Za povezavo z podatkovno bazo uporabljamo mysql-connector (8.2) jn JPA. Java verzija je 21.
 *MySQL* je potrebno vspostaviti na localhost:8180 z konfiguracijo, ki jo najdemo v sql_setup.sql.
 Za posamezne backend funkcionalnosti so v paketu controllers REST handlerji.
 Struktura frontend projekta je klasičen vue/vite projekt, z komponenti v src/components in slikami v src/assets.
