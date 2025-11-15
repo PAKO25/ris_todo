@@ -40,9 +40,9 @@ Projekt je organiziran v ločeni mapi za frontend in backend, kar omogoča neodv
 ```
 .
 ├── backend/                  # Mapa za Spring Boot aplikacijo
-│   └── todo/                 # Izvorna koda
+│   └── todo/                 # Izvorna koda backenda
 ├── frontend/                 # Mapa za Vue.js aplikacijo
-│   └── todo/                 # Izvorna koda
+│   └── todo/                 # Izvorna koda frontenda
 ├── sql_setup.sql             # Skripta za inicializacijo baze
 └── README.md                 # Ta datoteka
 ```
@@ -51,13 +51,13 @@ Projekt je organiziran v ločeni mapi za frontend in backend, kar omogoča neodv
 
 - **Git & Branching**:
   - `main` veja je zaščitena in predstavlja stabilno različico.
-  - Za vsako novo funkcionalnost ali popravek ustvarite novo vejo iz `main`.
+  - Za vsako novo funkcionalnost ali popravek ustvarite novo vejo iz `main`. (glej [Prispevanje](https://github.com/PAKO25/ris_todo?tab=readme-ov-file#3-navodila-za-razvijalce-prispevanje)
   - Ime veje naj sledi formatu `tip/kratek-opis` (npr. `feature/user-authentication` ali `fix/login-bug`).
 - **Commit sporočila**:
   - Pišite jih v angleščini.
   - Sledite formatu `tip: opis` (npr. `feat: Add user login endpoint`, `docs: Update README installation guide`).
 - **Koda**:
-  - **Java**: Sledite standardnim Java kodirnim konvencijam. Uporabljajte smiselna imena za spremenljivke in metode.
+  - **Java**: Sledite standardnim [Java kodirnim konvencijam](https://www.oracle.com/technetwork/java/codeconventions-150003.pdf). Uporabljajte smiselna in opisna imena za spremenljivke in metode.
   - **Vue**: Uporabljajte priporočila iz uradne Vue dokumentacije in sledite strukturi, ki jo generira Vite. Imena komponent naj bodo v formatu `PascalCase`.
 
 ---
@@ -91,8 +91,9 @@ Prepričajte se, da imate nameščeno naslednjo programsko opremo:
     ```bash
     cd backend/todo
     ```
-2.  Zgradite projekt z uporabo Maven ali Gradle ovojnice (če je prisotna) ali pa ga odprite v vaši najljubši IDE (npr. IntelliJ IDEA) in poženite glavno aplikacijsko datoteko.
+2.  Zgradite projekt z uporabo Maven. Alternativno ga odprite v vašem najljubšem IDE (npr. IntelliJ IDEA) in poženite glavno aplikacijsko datoteko ali ustvarite nov artifakt z glavnim razredom `backend/todo/src/main/java/com/example/todo/TodoApplication.java`.
 3.  Strežnik bo po uspešnem zagonu dostopen na `http://localhost:8080`.
+4.  Če spremenite konfiguracijo strežnika (npr. vprata), ustrezno posodobite tudi konfiguracijo Vite proxy-a, ki jo najdete v `frontend/todo/vite.config.ts`.
 
 ### 2.4. Frontend
 
