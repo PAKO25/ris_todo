@@ -15,6 +15,7 @@ Pregledna in enostavna spletna aplikacija za upravljanje z opravili, razvita v s
    - [Struktura projekta](#42-struktura-projekta)
    - [Standardi kodiranja](#43-standardi-kodiranja)
 5. [Navodila za prispevanje](#5-navodila-za-prispevanje)
+6. [Usecase diagram](#6-usecase-diagram)
 
 ---
 
@@ -184,3 +185,8 @@ Veseli bomo vašega prispevka! Če želite sodelovati pri razvoju:
 5.  Potisnite spremembe v vaš oddaljeni "fork".
 6.  Ustvarite "Pull Request" (PR) v originalni `PAKO25/ris_todo` repozitorij.
 7.  V opisu PR-ja jasno opišite, kaj ste spremenili in zakaj. Če rešujete obstoječo "težavo" (issue), jo omenite v opisu (npr. `Closes #123`).
+
+---
+
+## 6. Usecase diagram
+<img width="728" height="821" alt="dpu-ris drawio" src="https://github.com/user-attachments/assets/f9d16d31-9eb8-4bb1-a6af-0ee5295c7aa8" />
