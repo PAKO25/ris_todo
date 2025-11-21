@@ -54,27 +54,32 @@ Da bi ohranili preprostost, smo jasno določili obseg.
 
 Ta razdelek vsebuje razlago ključnih tehničnih izrazov, ki se uporabljajo v projektu.
 
-- **Proxy (Vite Proxy)**
-  - Vite proxy je mehanizem v razvojnem strežniku Vite, ki omogoča preusmerjanje API klicev iz frontend aplikacije na backend strežnik. S tem se izognemo težavam s CORS (Cross-Origin Resource Sharing) med razvojem, saj brskalnik misli, da se vsi klici izvajajo na isti domeni. V našem primeru se klici iz `http://localhost:5173/api` preusmerijo na `http://localhost:8080`.
+- **Uporabnik**
+   - Oseba, ki uporablja sistem todo. V sistem se prijavi z uporabniškim imenom in geslom ter lahko upravlja svoje sezname opravil in opravila.
 
-- **Component (Vue Component)**
-  - Komponenta je osnova gradnikov v ogrodju Vue.js. Predstavlja samostojen, ponovno uporaben del uporabniškega vmesnika z lastno logiko in izgledom (HTML, CSS in JavaScript). Aplikacija je sestavljena iz drevesa komponent, na primer `Login.vue` ali `TodoItem.vue`.
+- **Administrator**
+   - Poseben tip uporabnika, ki ima poleg običajnih uporabniških funkcionalnosti tudi dodatna pooblastila, kot so upravljanje drugih uporabnikov in pošiljanje obvestil.
 
-- **Composable (Vue Composable)**
-  - "Composable" je funkcija v ogrodju Vue 3, ki vsebuje in upravlja z reaktivno logiko. Uporablja se za organizacijo in ponovno uporabo logike med različnimi komponentami (npr. pridobivanje podatkov, upravljanje stanja). V projektu so te funkcije shranjene v mapi `frontend/todo/src/composables`.
+- **Seznam opravil**
+   - Zbirka opravil, ki jih ustvari posamezen uporabnik za določeno področje (npr. “Faks”, “Delo”, “Osebno”, "Inbox"). Uporabnik lahko ustvari več seznamov opravil.
 
-- **User (Uporabnik)**
-  - Predstavlja en zapis v tabeli `users` v podatkovni bazi. Vsak uporabnik ima svoje atribute, kot so uporabniško ime in geslo. Uporabnik je lahko lastnik več opravil (todo).
+- **Kolaboracijski seznam**
+   - Seznam opravil, ki je deljen med več uporabniki. Udeleženci lahko seznam in opravila na njem berejo in urejajo ali brišejo.
 
-- **Todo (Opravilo)**
-  - Predstavlja en zapis v tabeli `todos`. Vsako opravilo je povezano z določenim uporabnikom in vsebuje podatkeo opravilu (naslov, opis, ...).
+- **Opravilo (todo)**
+   - Posamezen element v seznamu opravil. Opravilo ima vsaj naslov in status, lahko pa tudi opis, rok, prioriteto in druge lastnosti.
 
-- **Model (JPA Model)**
-  - Java razred, ki predstavlja tabelo v podatkovni bazi. JPA (Java Persistence API) uporablja te modele za preslikavo podatkov med objekti v Javi in vrsticami v relacijski bazi (Object-Relational Mapping).
+- **Rok (deadline)**
+   - Datum in čas, do katerega naj bo določeno opravilo izvedeno. Rok se lahko nastavi ob ustvarjanju opravila ali kasneje pri urejanju.
 
-- **Controller/Handler (Spring Boot REST API Endpoint Handler)**
-  - V ogrodju Spring Boot je "Controller" razred, ki sprejema dohodne HTTP zahteve (GET, POST, ...) in jih obravnava. Vsaka metoda znotraj kontrolerja, označena z anotacijo, kot je `@GetMapping` ali `@PostMapping`, deluje kot "Handler" za določeno končno točko (endpoint) API-ja. Na primer, `TodoController.java` vsebuje metode za ustvarjanje, branje, posodabljanje in brisanje opravil.
+- **Profil uporabnika**
+   - Podatki, ki opisujejo uporabnika v sistemu (ime, uporabniško ime, e-poštni naslov, geslo, nastavitve obveščanja).
 
+- **Obvestilo**
+   - Sporočilo, ki ga sistem pošlje uporabniku ali vsem uporabnikom. Obvestilo lahko opozarja na morebitne spremembe sistema ali specifično obvestilo določenemu uporabniku, ki je za njega relevantno.
+
+- **PDF izvoz seznama**
+   - Funkcionalnost, ki uporabniku omogoča, da izbrani seznam opravil izvozi in shrani kot PDF dokument za tiskanje ali deljenje.
 ---
 
 ## 3. Navodila za namestitev
