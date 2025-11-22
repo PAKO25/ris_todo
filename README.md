@@ -194,4 +194,5 @@ Veseli bomo vašega prispevka! Če želite sodelovati pri razvoju:
 ---
 
 ## 6. Use-case diagram
-<img width="1115" height="1565" alt="DPU_todo_ris" src="https://github.com/user-attachments/assets/13521614-ce2a-4d08-968d-d0dc551cc2d6" />
+
+<img width="772" height="1034" alt="DPU_todo_ris" src="https://github.com/user-attachments/assets/a876bf09-9aa5-47c9-925e-bfad3b9f8502" />
