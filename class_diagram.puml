@@ -1,0 +1,152 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+package "Backend (Spring Boot)" {
+
+    package "Model / Entity" {
+        class User {
+            - Long id
+            - String username
+            - String email
+            - String password
+            + Long getId()
+            + String getUsername()
+            + void setUsername(String username)
+            + void updateDetails(String username, String email, String password)
+        }
+
+        class Administrator {
+        }
+
+        class TodoList {
+            - Long id
+            - String title
+            - boolean isShared
+            + void addItem(TodoItem item)
+            + void removeItem(TodoItem item)
+            + void setShared(boolean shared)
+        }
+        
+        class Collaboration {
+            - Long id
+            - User user
+            - TodoList list
+        }
+
+        class TodoItem {
+            - Long id
+            - String title
+            - String description
+            - boolean isCompleted
+            - LocalDateTime deadline
+            - Priority priority
+            + void markAsCompleted()
+            + void setDeadline(LocalDateTime newDeadline)
+            + void updateDetails(String title, String description, Priority priority)
+        }
+        
+        enum Priority {
+            LOW
+            MEDIUM
+            HIGH
+        }
+    }
+
+    package "Repository" {
+        interface UserRepository {
+            + User findByUsername(String username)
+            + List<String> findAllEmails()
+        }
+
+        interface TodoListRepository {
+            + TodoList findById(Long id)
+            + List<TodoList> findByOwner(User user)
+            + List<TodoList> findByCollaboration(Collaboration collaboration)
+        }
+        
+        interface CollaborationRepository {
+            + List<Collaboration> findByUser(User user)
+            + List<Collaboration> findByList(TodoList list)
+        }
+
+        interface TodoItemRepository {
+            + TodoItem findById(Long id)
+            + List<TodoItem> findByListId(Long listId)
+        }
+    }
+
+    package "Service" {
+        class UserService {
+            - UserRepository userRepository
+            + User registerUser(UserDto userDto)
+            + User login(String username, String password)
+            + User updateUserProfile(Long userId, UserDto newDetails)
+        }
+        
+        class AdminService {
+            - UserRepository userRepository
+            + void deleteUser(Long userId)
+            + void broadcastNotification(String message)
+            + void sendNotification(Long userId, String message)
+        }
+
+        class TodoListService {
+            - TodoListRepository listRepository
+            - CollaborationRepository collaborationRepository
+            + TodoList createList(User user, String title)
+            + void deleteList(Long listId)
+            + void shareList(Long listId, Long userId)
+            + void removeCollaborator(Long listId, Long userId)
+            + void toggleListSharedStatus(Long listId)
+            + File exportListAsPdf(Long listId)
+        }
+        
+        class TodoItemService {
+            - TodoItemRepository itemRepository
+            + TodoItem addTodo(Long listId, TodoItemDto itemDto)
+            + void deleteTodo(Long todoId)
+            + TodoItem updateTodo(Long todoId, String title, String description, Priority priority)
+            + void setTodoDeadline(Long todoId, LocalDateTime deadline)
+            + void toggleTodoCompletion(Long todoId)
+        }
+    }
+}
+
+' Inheritance (Generalization)
+User <|-- Administrator
+
+' Relationships
+User "1" -- "0..*" TodoList : owns >
+User "1" -- "0..*" Collaboration : has >
+TodoList "1" -- "0..*" Collaboration : has >
+
+' Composition (Strong ownership)
+TodoList "1" *-- "0..*" TodoItem : contains >
+
+' Enum usage
+TodoItem ..> Priority
+
+' Service Layer Dependencies
+UserService ..> UserRepository
+AdminService ..> UserRepository
+
+TodoListService ..> TodoListRepository
+TodoListService ..> CollaborationRepository
+
+TodoItemService ..> TodoItemRepository
+
+' Services use Entities
+UserService ..> User
+AdminService ..> Administrator
+TodoListService ..> TodoList
+TodoListService ..> Collaboration
+TodoItemService ..> TodoItem
+
+' Repository to Entity
+UserRepository ..> User
+TodoListRepository ..> TodoList
+CollaborationRepository ..> Collaboration
+TodoItemRepository ..> TodoItem
+
+@enduml

@@ -16,6 +16,7 @@ Pregledna in enostavna spletna aplikacija za upravljanje z opravili, razvita v s
    - [Standardi kodiranja](#43-standardi-kodiranja)
 5. [Navodila za prispevanje](#5-navodila-za-prispevanje)
 6. [Usecase diagram](#6-usecase-diagram)
+7. [Class diagram](#7-class-diagram)
 
 ---
 
@@ -196,3 +197,8 @@ Veseli bomo vašega prispevka! Če želite sodelovati pri razvoju:
 ## 6. Use-case diagram
 
 <img width="772" height="1034" alt="DPU_todo_ris" src="https://github.com/user-attachments/assets/a876bf09-9aa5-47c9-925e-bfad3b9f8502" />
+
+
+## 7. Class diagram
+Slika razrednega diagrama ter opisi razredov so v naslednji datoteki:
+[Razredni diagram](razredni_diagram.md)
