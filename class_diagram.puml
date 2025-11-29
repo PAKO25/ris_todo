@@ -10,13 +10,18 @@ package "Backend (Spring Boot)" {
             - String username
             - String email
             - String password
+            - Role role
             + Long getId()
             + String getUsername()
             + void setUsername(String username)
+            + Role getRole()
+            + void setRole(Role role)
             + void updateDetails(String username, String email, String password)
         }
 
-        class Administrator {
+        enum Role {
+            REGULAR
+            ADMINISTRATOR
         }
 
         class TodoList {
@@ -56,6 +61,7 @@ package "Backend (Spring Boot)" {
     package "Repository" {
         interface UserRepository {
             + User findByUsername(String username)
+            + User findById(Long id)
             + List<String> findAllEmails()
         }
 
@@ -68,6 +74,7 @@ package "Backend (Spring Boot)" {
         interface CollaborationRepository {
             + List<Collaboration> findByUser(User user)
             + List<Collaboration> findByList(TodoList list)
+            + Collaboration findByUserAndList(User user, TodoList list)
         }
 
         interface TodoItemRepository {
@@ -77,8 +84,19 @@ package "Backend (Spring Boot)" {
     }
 
     package "Service" {
+        class AuthorizationService {
+            - UserRepository userRepository
+            - TodoListRepository listRepository
+            - CollaborationRepository collaborationRepository
+            + boolean canAccessList(Long userId, Long listId)
+            + boolean canModifyProfile(Long requestingUserId, Long targetUserId)
+            + boolean isAdmin(Long userId)
+            + Long resolveToken(String token)
+        }
+
         class UserService {
             - UserRepository userRepository
+            - AuthorizationService authorizationService
             + User registerUser(UserDto userDto)
             + User login(String username, String password)
             + User updateUserProfile(Long userId, UserDto newDetails)
@@ -86,6 +104,7 @@ package "Backend (Spring Boot)" {
         
         class AdminService {
             - UserRepository userRepository
+            - AuthorizationService authorizationService
             + void deleteUser(Long userId)
             + void broadcastNotification(String message)
             + void sendNotification(Long userId, String message)
@@ -94,6 +113,7 @@ package "Backend (Spring Boot)" {
         class TodoListService {
             - TodoListRepository listRepository
             - CollaborationRepository collaborationRepository
+            - AuthorizationService authorizationService
             + TodoList createList(User user, String title)
             + void deleteList(Long listId)
             + void shareList(Long listId, Long userId)
@@ -104,6 +124,7 @@ package "Backend (Spring Boot)" {
         
         class TodoItemService {
             - TodoItemRepository itemRepository
+            - AuthorizationService authorizationService
             + TodoItem addTodo(Long listId, TodoItemDto itemDto)
             + void deleteTodo(Long todoId)
             + TodoItem updateTodo(Long todoId, String title, String description, Priority priority)
@@ -112,9 +133,6 @@ package "Backend (Spring Boot)" {
         }
     }
 }
-
-' Inheritance (Generalization)
-User <|-- Administrator
 
 ' Relationships
 User "1" -- "0..*" TodoList : owns >
@@ -126,19 +144,31 @@ TodoList "1" *-- "0..*" TodoItem : contains >
 
 ' Enum usage
 TodoItem ..> Priority
+User ..> Role
+
+' AuthorizationService Dependencies
+AuthorizationService ..> UserRepository
+AuthorizationService ..> TodoListRepository
+AuthorizationService ..> CollaborationRepository
+AuthorizationService ..> User
 
 ' Service Layer Dependencies
 UserService ..> UserRepository
+UserService ..> AuthorizationService
+
 AdminService ..> UserRepository
+AdminService ..> AuthorizationService
 
 TodoListService ..> TodoListRepository
 TodoListService ..> CollaborationRepository
+TodoListService ..> AuthorizationService
 
 TodoItemService ..> TodoItemRepository
+TodoItemService ..> AuthorizationService
 
 ' Services use Entities
 UserService ..> User
-AdminService ..> Administrator
+AdminService ..> User
 TodoListService ..> TodoList
 TodoListService ..> Collaboration
 TodoItemService ..> TodoItem
