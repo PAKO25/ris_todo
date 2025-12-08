@@ -1,0 +1,124 @@
+.menu{
+    background-color: #1e1e20;
+    width: 100%;
+}
+
+.user_name_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 15px;
+    cursor: pointer;
+}
+
+.user_name_block{
+    background-color: #303550;
+    color: #556ee8;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: inline-block;
+    text-align: center;
+    align-content: center;
+    font-weight: bold;
+}
+
+.user_name_status_container{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.user_name_text{
+    color: white;
+    font-size: large;
+    font-weight: 500;
+    margin: 0 0 0 15px;
+}
+
+.workspace_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.user_role_text{
+    color: white;
+    font-size: small;
+    font-weight: 300;
+    margin: 0 0 0 15px;
+}
+
+.workspace_text{
+    margin: 0 0 0 15px;
+    color: #6c6d73;
+}
+
+.add_workspace_button{
+    padding: 0;
+    margin-right: 30px;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    color: #6c6d73;
+    background-color: #29282c;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.todo_repo_list{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    height: 99vh;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #353535 transparent;
+}
+
+.todo_list_title{
+    color: #939398;
+    width: 80%;
+    border-radius: 8px;
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    display: flex;
+}
+
+.todo_list_title:hover {
+    background-color: #29282c;
+    cursor: pointer;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.05rem 0.6rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #facc15, #f97316); /* rumeno → oranžno */
+    color: #1a1a1d;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
+.todo_list_title_text {
+    margin: 0;
+    padding: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

@@ -1,6 +1,7 @@
 package com.example.todo.services;
 
 import com.example.todo.models.Collaboration;
+import com.example.todo.models.TodoItem;
 import com.example.todo.models.TodoList;
 import com.example.todo.models.User;
 import com.example.todo.repositories.CollaborationRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 public class TodoListService {
@@ -28,13 +30,27 @@ public class TodoListService {
     private AuthorizationService authorizationService;
 
     @Transactional
-    public TodoList createList(User user, String title) {
+    public TodoList createList(User user, String title, boolean isShared) {
         TodoList todoList = new TodoList();
         todoList.setTitle(title);
         todoList.setOwner(user);
-        todoList.setIsShared(false);
+        todoList.setIsShared(isShared);
         return listRepository.save(todoList);
     }
+
+    @Transactional
+    public TodoList createListForOwnerEmail(String ownerEmail, String title, boolean isShared) {
+        User owner = (User) userRepository.findByEmail(ownerEmail)
+                .orElseThrow(() -> new RuntimeException("Owner with email " + ownerEmail + " not found"));
+
+        return createList(owner, title, isShared);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TodoList> getListsForUser(User owner) {
+        return listRepository.findByOwnerWithOwner(owner);
+    }
+
 
     @Transactional
     public void deleteList(Integer listId) {

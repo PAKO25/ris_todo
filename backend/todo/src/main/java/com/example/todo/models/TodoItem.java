@@ -21,7 +21,11 @@ public class TodoItem {
     private Boolean isCompleted = false;
     
     private LocalDateTime deadline;
-    
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private KanbanLevel kanbanLevel;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Priority priority = Priority.MEDIUM;
@@ -29,7 +33,7 @@ public class TodoItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "list_id", nullable = false)
     private TodoList list;
-    
+
     // Constructors
     public TodoItem() {}
     
@@ -48,7 +52,10 @@ public class TodoItem {
     
     public LocalDateTime getDeadline() { return deadline; }
     public void setDeadline(LocalDateTime deadline) { this.deadline = deadline; }
-    
+
+    public KanbanLevel getKanbanLevel() { return kanbanLevel; }
+    public void setKanbanLevel(KanbanLevel kanbanLevel) { this.kanbanLevel = kanbanLevel; }
+
     public Priority getPriority() { return priority; }
     public void setPriority(Priority priority) { this.priority = priority; }
     

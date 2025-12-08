@@ -1,0 +1,173 @@
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
+
+.profile-modal-backdrop {
+    position: absolute;
+    inset: 0;;
+    background: radial-gradient(circle at top, rgba(139, 92, 246, 0.22), transparent 55%), radial-gradient(circle at bottom, rgba(45, 212, 191, 0.18), transparent 55%), rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(6px);
+    pointer-events: auto;
+}
+
+.profile-modal-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 1.5rem;
+    background: linear-gradient(135deg, #020617, #020617) padding-box, radial-gradient(circle at top left, #6366f1, #22d3ee) border-box;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.7);
+    padding: 1.5rem 1.75rem;
+    pointer-events: auto;
+    color: #e5e7eb;
+    transform: translateY(4px) scale(0.98);
+    opacity: 0;
+    animation: profile-modal-enter 160ms ease-out forwards;
+}
+
+@keyframes profile-modal-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.profile-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.profile-modal-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #f9fafb;
+}
+
+.profile-modal-close {
+    border: none;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.profile-modal-close:hover {
+    background: rgba(30, 64, 175, 0.9);
+    color: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.profile-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.profile-modal-field label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+}
+
+.profile-modal-field input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid #1f2937;
+    background-color: #020617;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.profile-modal-field input::placeholder {
+    color: #6b7280;
+}
+
+.profile-modal-field input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.7), 0 0 0 12px rgba(79, 70, 229, 0.15);
+    background-color: #020617;
+}
+
+.profile-modal-footer {
+    margin-top: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.profile-modal-button {
+    border-radius: 999px;
+    padding: 0.55rem 1.2rem;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+}
+
+.profile-modal-button--ghost {
+    background: transparent;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+.profile-modal-button--ghost:hover {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: #374151;
+    transform: translateY(-1px);
+}
+
+.profile-modal-button--primary {
+    background: linear-gradient(135deg, #6366f1, #22d3ee);
+    color: #0b1120;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.55), 0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.profile-modal-button--primary:hover {
+    box-shadow: 0 16px 40px rgba(79, 70, 229, 0.7), 0 0 0 1px rgba(15, 23, 42, 0.9);
+    transform: translateY(-1px);
+}
+
+.odjava_pragraph{
+    cursor: pointer;
+}

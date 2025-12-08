@@ -1,9 +1,6 @@
 package com.example.todo.services;
 
-import com.example.todo.models.Priority;
-import com.example.todo.models.TodoItem;
-import com.example.todo.models.TodoList;
-import com.example.todo.models.User;
+import com.example.todo.models.*;
 import com.example.todo.repositories.TodoItemRepository;
 import com.example.todo.repositories.TodoListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TodoItemService {
@@ -22,15 +20,19 @@ public class TodoItemService {
     private TodoListRepository listRepository;
 
     @Autowired
+    private TodoItemRepository todoItemRepository;
+
+    @Autowired
     private AuthorizationService authorizationService;
 
     @Transactional
-    public TodoItem addTodo(Integer listId, String title, String description, Priority priority) {
+    public TodoItem addTodo(Integer listId, String title, String description, Priority priority, KanbanLevel kanbanLevel) {
         TodoList list = listRepository.findById(listId).orElseThrow(() -> new RuntimeException("No such list"));
 
         TodoItem item = new TodoItem();
         item.setTitle(title);
         item.setDescription(description);
+        item.setKanbanLevel(kanbanLevel);
         item.setPriority(priority != null ? priority : Priority.MEDIUM);
         item.setIsCompleted(false);
         item.setList(list);
@@ -45,7 +47,7 @@ public class TodoItemService {
     }
 
     @Transactional
-    public TodoItem updateTodo(Integer todoId, String title, String description, Priority priority) {
+    public TodoItem updateTodo(Integer todoId, String title, String description, Priority priority, KanbanLevel kanbanLevel) {
         TodoItem item = itemRepository.findById(todoId).orElseThrow(() -> new RuntimeException("No such todo"));
 
         if (title != null) {
@@ -58,7 +60,37 @@ public class TodoItemService {
             item.setPriority(priority);
         }
 
+        if (kanbanLevel != null) {
+            item.setKanbanLevel(kanbanLevel);
+        }
+
         return itemRepository.save(item);
+    }
+
+    @Transactional
+    public TodoItem createItem(
+            Integer listId,
+            String title,
+            String description,
+            LocalDateTime deadline,
+            KanbanLevel kanbanLevel,
+            Priority priority
+    ) {
+        TodoList list = listRepository.findById(listId)
+                .orElseThrow(() -> new RuntimeException("No such list"));
+
+        TodoItem item = new TodoItem();
+        item.setTitle(title);
+        item.setDescription(description);
+        item.setDeadline(deadline);
+        item.setIsCompleted(false);
+        item.setKanbanLevel(kanbanLevel);
+        if (priority != null) {
+            item.setPriority(priority);
+        }
+        item.setList(list);
+
+        return todoItemRepository.save(item);
     }
 
     @Transactional
@@ -73,6 +105,10 @@ public class TodoItemService {
         TodoItem item = itemRepository.findById(todoId).orElseThrow(() -> new RuntimeException("No such todo"));
         item.setIsCompleted(!item.getIsCompleted());
         itemRepository.save(item);
+    }
+
+    public List<TodoItem> getItemsForList(Integer listId) {
+        return todoItemRepository.findByListId(listId);
     }
 }
 

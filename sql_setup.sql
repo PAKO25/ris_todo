@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS todo_items (
     description VARCHAR(1000),
     is_completed BOOLEAN NOT NULL DEFAULT FALSE,
     deadline DATETIME,
+    kanban_level ENUM('TODO', 'INPROGRESS', 'REVIEW', 'DONE') NOT NULL
     priority ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL DEFAULT 'MEDIUM',
     list_id INTEGER NOT NULL,
     FOREIGN KEY (list_id) REFERENCES todo_lists(id) ON DELETE CASCADE

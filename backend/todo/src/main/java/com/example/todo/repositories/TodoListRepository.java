@@ -19,4 +19,8 @@ public interface TodoListRepository extends JpaRepository<TodoList, Integer> {
 
     @Query("SELECT c.list FROM Collaboration c WHERE c.user = :user")
     List<TodoList> findByCollaborationUser(@Param("user") User user);
+
+    @Query("SELECT l FROM TodoList l JOIN FETCH l.owner WHERE l.owner = :owner")
+    List<TodoList> findByOwnerWithOwner(@Param("owner") User owner);
+
 }
