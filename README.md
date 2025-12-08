@@ -17,6 +17,7 @@ Pregledna in enostavna spletna aplikacija za upravljanje z opravili, razvita v s
 5. [Navodila za prispevanje](#5-navodila-za-prispevanje)
 6. [Usecase diagram](#6-usecase-diagram)
 7. [Class diagram](#7-class-diagram)
+8. [Dodana funkcionalnost: izvoz seznama v PDF](#8-dodana-funkcionalnost-izvoz-seznama-v-pdf)
 
 ---
 
@@ -42,7 +43,8 @@ Da bi ohranili preprostost, smo jasno določili obseg.
 ### Ključne Funkcionalnosti
 *   **Minimalističen vmesnik:** Hitro dodajanje in pregled nalog brez motenj.
 *   **Prilagodljiva organizacija:** Ustvarjanje lastnih seznamov (npr. "Delo", "Osebno").
-*   **Robustna arhitektura:** Zaledje v Javi (Spring Boot) in sodoben čelni del (Vue.js).
+*   **Vizualna organizacija v Kanban boardu:** Opravila so razporejena v stolpce (To do, In progress, Review, Done), kar omogoča hiter pregled nad stanjem nalog.
+*   **Robustna arhitektura:** Zaledje v Javi (Spring Boot) in sodoben čelni del (React + TypeScript).
 
 ### Poslovne Omejitve
 *   **Ekipa in viri:** Projekt razvijata dva študenta v okviru študijskih obveznosti in prostega časa.
@@ -78,6 +80,9 @@ Ta razdelek vsebuje razlago ključnih tehničnih izrazov, ki se uporabljajo v pr
 
 - **Obvestilo**
    - Sporočilo, ki ga sistem pošlje uporabniku ali vsem uporabnikom. Obvestilo lahko opozarja na morebitne spremembe sistema ali specifično obvestilo določenemu uporabniku, ki je za njega relevantno.
+
+- **Kanban board**
+   - Vizualna predstavitev seznama opravil v stolpcih (npr. "To do", "In progress", "Review", "Done"), kjer položaj opravila v stolpcu odraža njegovo trenutno stanje v procesu.
 
 - **PDF izvoz seznama**
    - Funkcionalnost, ki uporabniku omogoča, da izbrani seznam opravil izvozi in shrani kot PDF dokument za tiskanje ali deljenje.
@@ -145,7 +150,8 @@ Ta razdelek vsebuje tehnične informacije o projektu, uporabljene tehnologije, s
 | **Backend** | Java | `21` | Osnovni programski jezik za strežniški del. |
 | | Spring Boot | `3.5` | ogrodje za razvoj REST API-ja. |
 | | JPA (Hibernate) | | Standard za preslikavo objektov v relacijsko bazo. |
-| **Frontend** | Vue.js | `~3.5` | Ogrodje za izgradnjo uporabniškega vmesnika. |
+| **Frontend** | React | `18+` | Ogrodje za izgradnjo uporabniškega vmesnika (SPA). |
+| | TypeScript | `5+` | Statično tipkan jezik nad JavaScriptom za varnejšo kodo. |
 | | Vite | `~7.1` | Orodje za gradnjo in zagon frontend aplikacije. |
 | | Node.js | `20+` | Priporočeno okolje za poganjanje Vite in npm. |
 | **Database** | MySQL | `8.0+` | Relacijska podatkovna baza za shranjevanje podatkov. |
@@ -202,3 +208,66 @@ Veseli bomo vašega prispevka! Če želite sodelovati pri razvoju:
 ## 7. Class diagram
 Slika razrednega diagrama ter opisi razredov so v naslednji datoteki:
 [Razredni diagram](razredni_diagram.md)
+
+---
+
+## 8. Dodana funkcionalnost: izvoz seznama v PDF
+
+### 8.1. Kakšno funkcionalnost smo implementirali
+
+Implementirana je bila funkcionalnost **izvoza izbranega seznama opravil v PDF**.  
+Uporabnik lahko za poljuben seznam (todoList), ki ga ima odprtega na Kanban boardu, z enim klikom ustvari PDF dokument, ki vsebuje:
+
+- naslov izbranega seznama,
+- razdelke za vsak Kanban stolpec (*To do*, *In progress*, *Review*, *Done*),
+- znotraj stolpcev pa opravila razporejena po **prioriteti** (*High*, *Medium*, *Low*).
+
+PDF je primeren za tiskanje ali deljenje z drugimi člani ekipe (npr. po e-pošti, v prilogi poročila ipd.).
+
+### 8.2. Kako nova funkcionalnost deluje
+
+- Ko je na Kanban boardu izbran določen seznam opravil:
+  - aplikacija iz stanja (state) prebere vse vidne stolpce in opravila,
+  - opravila razdeli po stolpcih glede na `kanbanLevel` (*TODO*, *IN_PROGRESS*, *REVIEW*, *DONE*),
+  - znotraj posameznega stolpca opravila dodatno razporedi po prioriteti (*HIGH*, *MEDIUM*, *LOW*),
+  - generira PDF, ki vsebuje:
+    - naslov seznama opravil kot glavo dokumenta,
+    - za vsak stolpec ime stolpca,
+    - za vsako prioriteto podnaslov (*Priority: High/Medium/Low*),
+    - seznam opravil v obliki alinej, po potrebi tudi z datumom roka (`deadline`), če je nastavljen.
+- Ime PDF datoteke je sestavljeno iz naslova seznama, prilagojenega za datotečni sistem (brez posebnih znakov), npr.:
+  - `Faks_obveznosti_kanban.pdf`
+  - `Sprint_12_kanban.pdf`.
+
+### 8.3. Kako lahko uporabnik preizkusi novo funkcionalnost
+
+Da preizkusite izvoz v PDF:
+
+1. **Zaženite aplikacijo**
+   - Backend: `cd backend/todo` → zagon Spring Boot aplikacije.
+   - Frontend: `cd frontend/todo` → `npm install` (prvič) → `npm run dev`.
+   - Odprite aplikacijo v brskalniku (npr. `http://localhost:5173`).
+
+2. **Prijava ali registracija**
+   - Če še nimate računa, se registrirajte preko modalnega okna na vstopni strani.
+   - Prijavite se z ustvarjenim uporabnikom.
+
+3. **Izbira ali ustvarjanje seznama opravil**
+   - V levem meniju (Workspace) izberite obstoječi seznam ali ustvarite novega s klikom na gumb **`+`**.
+   - Po potrebi v izbranem seznamu dodajte nekaj opravil v različne stolpce (*To do*, *In progress*, *Review*, *Done*) ter jim nastavite različne prioritete.
+
+4. **Dostop do funkcionalnosti export PDF**
+   - Ko je seznam izbran, se na vrhu Kanban boarda (v headerju vsebine) prikaže:
+     - naslov izbranega seznama,
+     - gumb **`Export PDF`** na desni strani.
+
+5. **Izvoz PDF**
+   - Kliknite na gumb **`Export PDF`**.
+   - Brskalnik bo samodejno začel prenos datoteke z imenom v obliki  
+     `ImeSeznama_kanban.pdf`.
+   - Datoteko lahko:
+     - odprete lokalno (npr. z Adobe Reader, brskalnikom ipd.),
+     - natisnete kot klasičen dokument,
+     - priložite e-pošti ali jo delite z ostalimi člani ekipe.
+
+S tem lahko uporabnik hitro ustvari pregledno, statično verzijo svojega Kanban boarda, primerno za sestanke, arhiviranje ali poročila.
