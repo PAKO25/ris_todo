@@ -10,6 +10,9 @@
     *   Dodajanje novega opravila
     *   Obravnava napak pri dodajanju opravila
 *   **Tilen:** /
+    *   Dodajanje novega opravila z eksplicitno prioriteto (ohranjanje prioritete + povezava na pravilen seznam)
+    *   Preklop statusa opravila: spremeni se samo `isCompleted`, ostali podatki ostanejo enaki
+    *   Dvojni preklop statusa: stanje `isCompleted` se po dveh preklopih vrne na začetno stanje
 
 ## Podroben opis in rezultati testov
 
@@ -39,6 +42,21 @@ V tem sklopu smo testirali funkcionalnosti v `TodoItemService`. Spodaj so navede
 *   **Opis:** Test preverja, ali metoda `addTodo` pravilno zavrne zahtevo (vrže `RuntimeException`), če poskušamo dodati opravilo na seznam, ki ne obstaja.
 *   **Pomen:** Zagotavlja integriteto podatkov (tuji ključi) in preprečuje "sirote" v bazi.
 *   **Rezultat:** ✅ Uspešen
+
+### 6. Obravnava ohranjanja prioritete in ali je to opravilo povezano na pravilen seznam opravil
+*   **Opis:** Test preverja metodo `addTodo` pri dodajanju opravila z eksplicitno podano prioriteto (npr. `LOW`, `MEDIUM`, `HIGH`). Preveri, ali se prioriteta pravilno shrani v bazo (in ne ostane privzeta `MEDIUM` razen v koliko je ta eksplicitno nastavljena) ter ali je novo opravilo povezano s pravilnim `TodoList` (prek ID-ja seznama).
+*   **Pomen:** Zagotavlja pravilnost shranjevanja podatkov in preprečuje napake, kjer bi se vnosne vrednosti (prioriteta ali povezava na seznam) izgubile ali bile napačno nastavljene.
+*   **Rezultat:** Uspešen
+
+### 7. Obravnava ohranjanja osatalih podatkov pri spreminjanju stanja isCompleted
+*   **Opis:** Test preverja metodo `toggleTodoCompletion` in zagotavlja, da se ob preklopu statusa spremeni izključno polje `isCompleted`, medtem ko ostali podatki opravila (npr. `title`, `description`, `priority`, `kanbanLevel` ter povezava na seznam) ostanejo nespremenjeni.
+*   **Pomen:** Preprečuje regresije, kjer bi preklop statusa nenamerno spremenil tudi druge lastnosti opravila, kar bi vodilo do izgube ali popačenja podatkov.
+*   **Rezultat:** Uspešen
+
+### 8. Obravnava ohranjanja isCompleted stanja po dvojnem premiku
+*   **Opis:** Test preverja metodo `toggleTodoCompletion` pri dveh zaporednih klicih. Pričakovano je, da se stanje `isCompleted` po prvem klicu spremeni (npr. `false` → `true`), po drugem klicu pa se vrne na prvotno vrednost (npr. `true` → `false`).
+*   **Pomen:** Zagotavlja konsistentnost funkcionalnosti preklopa statusa in pravilno delovanje v realnih pogojih, kjer uporabnik lahko večkrat zaporedoma spremeni stanje opravila.
+*   **Rezultat:** Uspešen
 
 ---
 **Skupna ocena:** Vsi testi so bili uspešno opravljeni, odkrita ni bila nobena napaka.
