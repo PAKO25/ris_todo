@@ -34,6 +34,10 @@ public class TodoItem {
     @JoinColumn(name = "list_id", nullable = false)
     private TodoList list;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String image;
+
     // Constructors
     public TodoItem() {}
     
@@ -61,4 +65,7 @@ public class TodoItem {
     
     public TodoList getList() { return list; }
     public void setList(TodoList list) { this.list = list; }
+
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
 }
