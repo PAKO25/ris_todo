@@ -12,7 +12,7 @@
 4. **Sprememba API endpointa za spreminjanje todojev** (brisanje/spreminjanje slike)
 5. **Prikaz slik na pročelju**
 6. **Možnost spreminjanja slik na pročelju**
-
+7. **Možno dodatni ali zamenjatu sliko na pročelju**
 ---
 
 ## 🃏 Točkovanje Funkcionalnosti (Planning Poker)
@@ -26,7 +26,7 @@
 | **4.** API: Spreminjanje | 10 | 10 | **10** |
 | **5.** Frontend: Prikaz | 5 | 7 | **6** |
 | **6.** Frontend: Urejanje | 10 | 10 | **10** |
-
+| **7** Frontend: Dodajanje | 10 | 12 | **11** |
 ---
 
 ## ✅ Definicija Končanosti (Definition of Done)
@@ -36,13 +36,13 @@
 *   **4:** Controller in service sta ustrezno posodobljena za obravnavo slik. V kolikor je slika definirana, se posodobi, v kolikor ni, se ne.
 *   **5:** Slike se na pročelju ustrezno prikazujejo.
 *   **6:** Na pročelju je mogoče spreminjati in brisati slike, tako kot je možno spreminjati vsebino samega todo-ja.
-
+*   **7:** Na pročelju je mogoče dodati sliko k že obstoječemu opravilu, ali novo ustvarjenjemu, prav tako pa jo zamenjati.
 ---
 
 ## 👥 Delitev Nalog
 Naloge sva razdelila po sklopih:
 - **Zaledje (Back-end):** Funkcionalnosti (1, 2, 3, 4)
-- **Pročelje (Front-end):** Funkcionalnosti (5, 6)
+- **Pročelje (Front-end):** Funkcionalnosti (5, 6, 7)
 
 > **Sistem delitve:** Sklopa sva si razdelila po naslednjem sistemu: kdor zmaga partijo šaha, dobi sklop (5, 6).
 
@@ -63,5 +63,6 @@ Vse posamične funkcionalnosti so implementirane. Skupaj zadoščajo osnovni zgo
 | **2** | 6 | 3 |
 | **3** | 3.5 | 1 |
 | **4** | 10 | 3 |
-| **5** | 6 | ? |
-| **6** | 10 | ? |
+| **5** | 6 | 7 |
+| **6** | 10 | 9 |
+| **7** | 11 | 15 |
