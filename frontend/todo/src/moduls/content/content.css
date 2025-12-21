@@ -169,6 +169,7 @@
 
 .task_new_input {
     flex: 1;
+    width: 80%;
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     border: 1px solid #444;
@@ -209,4 +210,66 @@
 
 .export_button:active {
     transform: translateY(1px);
+}
+
+.task_new_form--rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task_new_row {
+    width: 100%;
+}
+
+.task_new_button--full {
+    width: 100%;
+}
+
+.task_new_image_dropzone {
+    padding: 10px;
+    border: 1px dashed rgba(0,0,0,0.25);
+    border-radius: 10px;
+}
+
+.task_new_image_dropzone--active {
+    border-color: rgba(0,0,0,0.55);
+}
+
+.task_new_image_row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.task_new_image_hint {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.task_new_image_name {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.task_more_button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.75;
+    padding: 0 6px;
+    line-height: 1;
+    font-size: 18px;
+}
+
+.task_more_button:hover {
+    opacity: 1;
+}
+
+.task_header_row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
 }
