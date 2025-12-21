@@ -8,6 +8,7 @@ export interface TodoItemDTO {
     deadline: string | null;
     kanbanLevel: string;
     priority: string;
+    image: string | null;
 }
 
 export async function get_todo_items_for_list(
@@ -33,6 +34,7 @@ export async function create_todo_item_api(
         deadline?: string | null;
         kanbanLevel: string;
         priority?: string;
+        image?: string | null;
     }
 ): Promise<TodoItemDTO> {
     const res = await fetch(`${API_BASE}/${listId}/items`, {

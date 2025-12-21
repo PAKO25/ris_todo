@@ -11,6 +11,7 @@ public class TodoItemDto {
     private LocalDateTime deadline;
     private String kanbanLevel;
     private String priority;
+    private String image;
 
     public static TodoItemDto from(TodoItem item) {
         TodoItemDto dto = new TodoItemDto();
@@ -21,6 +22,7 @@ public class TodoItemDto {
         dto.deadline = item.getDeadline();
         dto.kanbanLevel = item.getKanbanLevel() != null ? item.getKanbanLevel().name() : null;
         dto.priority = item.getPriority() != null ? item.getPriority().name() : null;
+        dto.image = item.getImage();
         return dto;
     }
 
@@ -78,5 +80,13 @@ public class TodoItemDto {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

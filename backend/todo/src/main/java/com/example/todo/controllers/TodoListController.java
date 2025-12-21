@@ -102,7 +102,8 @@ public class TodoListController {
                 request.getDescription(),
                 deadline,
                 level,
-                priority);
+                priority,
+                request.getImage());
 
         return TodoItemDto.from(item);
     }

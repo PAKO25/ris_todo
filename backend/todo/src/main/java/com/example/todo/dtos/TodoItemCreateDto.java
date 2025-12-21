@@ -6,6 +6,7 @@ public class TodoItemCreateDto {
     private String deadline;
     private String kanbanLevel;
     private String priority;
+    private String image;
 
     public String getTitle() {
         return title;
@@ -45,5 +46,13 @@ public class TodoItemCreateDto {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

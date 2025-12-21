@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS todo_items (
     kanban_level ENUM('TODO', 'INPROGRESS', 'REVIEW', 'DONE') NOT NULL,
     priority ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL DEFAULT 'MEDIUM',
     list_id INTEGER NOT NULL,
+    image LONGTEXT,
     FOREIGN KEY (list_id) REFERENCES todo_lists(id) ON DELETE CASCADE
 );
 

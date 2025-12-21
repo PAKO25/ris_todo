@@ -49,7 +49,8 @@ public class TodoItemController {
                 request.getTitle(),
                 request.getDescription(),
                 Priority.valueOf(request.getPriority()),
-                KanbanLevel.valueOf(request.getKanbanLevel()));
+                KanbanLevel.valueOf(request.getKanbanLevel()),
+                request.getImage());
     }
 
     @DeleteMapping("/{todoId}")
@@ -66,6 +67,7 @@ public class TodoItemController {
                 body.getTitle(),
                 body.getDescription(),
                 Priority.valueOf(body.getPriority()),
-                KanbanLevel.valueOf(body.getKanbanLevel()));
+                KanbanLevel.valueOf(body.getKanbanLevel()),
+                body.getImage());
     }
 }

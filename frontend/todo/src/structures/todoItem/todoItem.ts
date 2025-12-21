@@ -3,15 +3,18 @@ export default class todoItem{
     description:string;
     idCompleted:boolean;
     deadLine?:Date;
+    image?:string;
 
     constructor(
         title:string,
         description:string,
-        idCompleted:boolean
+        idCompleted:boolean,
+        image?:string
     ){
         this.title = title;
         this.description = description;
         this.idCompleted = idCompleted;
+        this.image = image;
     }
 
     get_date_togo():string{

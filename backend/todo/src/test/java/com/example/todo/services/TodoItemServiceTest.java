@@ -105,7 +105,7 @@ class TodoItemServiceTest {
     void addCreatesNewItemInRepository() {
         long countBefore = todoItemRepository.count();
 
-        TodoItem created = todoItemService.addTodo(list.getId(), "t", "d", null, KanbanLevel.TODO);
+        TodoItem created = todoItemService.addTodo(list.getId(), "t", "d", null, KanbanLevel.TODO, null);
 
         long countAfter = todoItemRepository.count();
         assertEquals(countBefore + 1, countAfter, "Število todojev se more povečat za 1");
@@ -127,7 +127,7 @@ class TodoItemServiceTest {
         Integer invalidListId = -1;
 
         assertThrows(RuntimeException.class,
-                () -> todoItemService.addTodo(invalidListId, "t", "d", null, KanbanLevel.TODO),
+                () -> todoItemService.addTodo(invalidListId, "t", "d", null, KanbanLevel.TODO, null),
                 "Pri neveljavnem ID-ju seznama se mora sprožiti RuntimeException");
     }
 
@@ -135,7 +135,7 @@ class TodoItemServiceTest {
     @ParameterizedTest
     @EnumSource(value = Priority.class, names = {"LOW", "MEDIUM", "HIGH"})
     void addTodoWithExplicitPriorityPersists(Priority priority) {
-        TodoItem created = todoItemService.addTodo(list.getId(), "Nov todo", "nas testni todo", priority, KanbanLevel.TODO);
+        TodoItem created = todoItemService.addTodo(list.getId(), "Nov todo", "nas testni todo", priority, KanbanLevel.TODO, null);
         assertNotNull(created.getId(), "Todo nima ID-ja");
 
         TodoItem reloaded = todoItemRepository.findById(created.getId()).orElseThrow(() -> new AssertionError("Todo-ja ni v bazi"));

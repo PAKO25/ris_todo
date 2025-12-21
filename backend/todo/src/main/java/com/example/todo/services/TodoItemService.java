@@ -26,7 +26,8 @@ public class TodoItemService {
     private AuthorizationService authorizationService;
 
     @Transactional
-    public TodoItem addTodo(Integer listId, String title, String description, Priority priority, KanbanLevel kanbanLevel) {
+    public TodoItem addTodo(Integer listId, String title, String description, Priority priority,
+            KanbanLevel kanbanLevel, String image) {
         TodoList list = listRepository.findById(listId).orElseThrow(() -> new RuntimeException("No such list"));
 
         TodoItem item = new TodoItem();
@@ -36,6 +37,7 @@ public class TodoItemService {
         item.setPriority(priority != null ? priority : Priority.MEDIUM);
         item.setIsCompleted(false);
         item.setList(list);
+        item.setImage(image);
 
         return itemRepository.save(item);
     }
@@ -47,7 +49,8 @@ public class TodoItemService {
     }
 
     @Transactional
-    public TodoItem updateTodo(Integer todoId, String title, String description, Priority priority, KanbanLevel kanbanLevel) {
+    public TodoItem updateTodo(Integer todoId, String title, String description, Priority priority,
+            KanbanLevel kanbanLevel, String image) {
         TodoItem item = itemRepository.findById(todoId).orElseThrow(() -> new RuntimeException("No such todo"));
 
         if (title != null) {
@@ -64,6 +67,10 @@ public class TodoItemService {
             item.setKanbanLevel(kanbanLevel);
         }
 
+        if (image != null) {
+            item.setImage(image);
+        }
+
         return itemRepository.save(item);
     }
 
@@ -74,8 +81,8 @@ public class TodoItemService {
             String description,
             LocalDateTime deadline,
             KanbanLevel kanbanLevel,
-            Priority priority
-    ) {
+            Priority priority,
+            String image) {
         TodoList list = listRepository.findById(listId)
                 .orElseThrow(() -> new RuntimeException("No such list"));
 
@@ -89,13 +96,14 @@ public class TodoItemService {
             item.setPriority(priority);
         }
         item.setList(list);
+        item.setImage(image);
 
         return todoItemRepository.save(item);
     }
 
     @Transactional
     public void setTodoDeadline(Integer todoId, LocalDateTime deadline) {
-        TodoItem item = itemRepository.findById(todoId) .orElseThrow(() -> new RuntimeException("No such todo"));
+        TodoItem item = itemRepository.findById(todoId).orElseThrow(() -> new RuntimeException("No such todo"));
         item.setDeadline(deadline);
         itemRepository.save(item);
     }
@@ -111,4 +119,3 @@ public class TodoItemService {
         return todoItemRepository.findByListId(listId);
     }
 }
-
