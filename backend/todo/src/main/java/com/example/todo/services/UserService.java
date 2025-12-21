@@ -19,7 +19,7 @@ class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();//nekaj varnosti vseeno ne skodi :)
+        return new BCryptPasswordEncoder();// nekaj varnosti vseeno ne skodi :)
     }
 }
 
@@ -46,7 +46,8 @@ public class UserService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        String passwordHash = passwordEncoder.encode(password);
+        user.setPassword(passwordHash);
 
         return userRepository.save(user);
     }
@@ -92,86 +93,5 @@ public class UserService {
 
     public List<String> getAllEmails() {
         return userRepository.findAllEmails();
-    }
-}
-
-class RegisterRequest {
-    private String username;
-    private String email;
-    private String password;
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-}
-
-class LoginRequest {
-    private String username;
-    private String password;
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-}
-
-
-class UserResponse {
-    private Integer id;
-    private String username;
-    private String email;
-    private String role;
-
-    public static UserResponse from(User user) {
-        UserResponse dto = new UserResponse();
-        dto.id = user.getId();
-        dto.username = user.getUsername();
-        dto.email = user.getEmail();
-        dto.role = user.getRole().name();
-        return dto;
-    }
-
-    public Integer getId() { return id; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getRole() { return role; }
-}
-
-@RestController
-@RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173") // Vite
-class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request) {
-        User user = userService.registerUser(
-                request.getUsername(),
-                request.getEmail(),
-                request.getPassword()
-        );
-        return ResponseEntity.ok(UserResponse.from(user));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
-        User user = userService.login(
-                request.getUsername(),
-                request.getPassword()
-        );
-        return ResponseEntity.ok(UserResponse.from(user));
-    }
-
-    @GetMapping("/emails")
-    public ResponseEntity<List<String>> getAllEmails() {
-        return ResponseEntity.ok(userService.getAllEmails());
     }
 }

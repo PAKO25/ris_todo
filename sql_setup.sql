@@ -52,8 +52,9 @@ CREATE TABLE IF NOT EXISTS todo_items (
 
 
 INSERT INTO users (username, email, password, role) VALUES 
-    ('admin', 'admin@example.com', 'admin123', 'ADMINISTRATOR'),
-    ('testuser', 'test@example.com', 'password123', 'REGULAR');
+    ('admin', 'admin@example.com', '$2a$10$ux1wQsLvBPSmciqPdi0/sOsmyZn2qA4xbFi1nsdWQWPW8ywYUeVEq', 'ADMINISTRATOR'),
+    ('testuser', 'test@example.com', '$2a$10$ux1wQsLvBPSmciqPdi0/sOsmyZn2qA4xbFi1nsdWQWPW8ywYUeVEq', 'REGULAR');
+# password: geslo123
 
 INSERT INTO todo_lists (title, is_shared, owner_id) VALUES 
     ('Personal Tasks', FALSE, 2),
