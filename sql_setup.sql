@@ -1,9 +1,9 @@
 DROP SCHEMA if exists todo_ris;
 CREATE SCHEMA todo_ris;
 
-DROP USER IF EXISTS 'todo_backend'@'localhost';
-CREATE USER 'todo_backend'@'localhost' IDENTIFIED BY 'geslo123';
-GRANT ALL PRIVILEGES ON todo_ris.* TO 'todo_backend'@'localhost';
+DROP USER IF EXISTS 'todo_backend'@'%';
+CREATE USER 'todo_backend'@'%' IDENTIFIED BY 'geslo123';
+GRANT ALL PRIVILEGES ON todo_ris.* TO 'todo_backend'@'%';
 FLUSH PRIVILEGES;
 
 USE todo_ris;
@@ -64,10 +64,10 @@ INSERT INTO todo_lists (title, is_shared, owner_id) VALUES
 
 INSERT INTO collaborations (user_id, list_id) VALUES (1, 2);
 
-INSERT INTO todo_items (title, description, is_completed, deadline, priority, list_id) VALUES
-    ('Buy groceries', 'Milk, bread, eggs', FALSE, '2025-12-10 18:00:00', 'HIGH', 1),
-    ('Finish report', 'Complete the quarterly report', FALSE, '2025-12-08 17:00:00', 'HIGH', 1),
-    ('Workout', 'Go for a 30-minute run', FALSE, NULL, 'MEDIUM', 1),
-    ('Read book', 'Read 50 pages of a novel', TRUE, NULL, 'LOW', 1),
-    ('Team meeting preparation', 'Prepare slides for Monday meeting', FALSE, '2025-12-09 09:00:00', 'HIGH', 2),
-    ('Code review', 'Review pull requests', FALSE, NULL, 'MEDIUM', 2);
+INSERT INTO todo_items (title, description, is_completed, deadline, kanban_level, priority, list_id) VALUES
+    ('Buy groceries', 'Milk, bread, eggs', FALSE, '2025-12-10 18:00:00', 'TODO', 'HIGH', 1),
+    ('Finish report', 'Complete the quarterly report', FALSE, '2025-12-08 17:00:00', 'TODO', 'HIGH', 1),
+    ('Workout', 'Go for a 30-minute run', FALSE, NULL, 'TODO', 'MEDIUM', 1),
+    ('Read book', 'Read 50 pages of a novel', TRUE, NULL, 'DONE', 'LOW', 1),
+    ('Team meeting preparation', 'Prepare slides for Monday meeting', FALSE, '2025-12-09 09:00:00', 'TODO', 'HIGH', 2),
+    ('Code review', 'Review pull requests', FALSE, NULL, 'INPROGRESS', 'MEDIUM', 2);
