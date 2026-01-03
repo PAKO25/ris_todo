@@ -52,3 +52,30 @@ export async function create_todo_item_api(
 
     return await res.json();
 }
+
+export async function update_todo_item_api(
+    itemId: number,
+    data: {
+        title?: string;
+        description?: string;
+        deadline?: string | null;
+        kanbanLevel?: string;
+        priority?: string;
+        image?: string | null;
+    }
+): Promise<TodoItemDTO> {
+    const res = await fetch(`${API_BASE.replace('/lists', '/items')}/${itemId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Napaka pri posodabljanju opravila");
+    }
+
+    return await res.json();
+}
