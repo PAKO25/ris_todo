@@ -8,6 +8,7 @@ import {
 } from "../../API/todo/todoItemAPI";
 import { get_user_todoListCache_all } from "../../cache/todoListCache.ts";
 import jsPDF from "jspdf";
+import Progress from "./progress/progress.tsx";
 
 type TaskTag = "low" | "medium" | "high";
 
@@ -479,6 +480,8 @@ function Content({ selectedListId }: ContentProps) {
             {selectedListId == null && <p className="content_hint">Izberi seznam v levem meniju.</p>}
             {loading && <p>Nalagam opravila...</p>}
 
+            {selectedListId !== null && (<Progress columns={columns} />)}
+
             {selectedListId != null &&
                 columns.map((column) => (
                     <section
@@ -747,7 +750,6 @@ function Content({ selectedListId }: ContentProps) {
                                     </article>
                                 </React.Fragment>
                             ))}
-
                             {column.tasks.length === 0 && !loading && activeNewTaskColumn !== column.id && (
                                 <div className="kanban_column_empty">Ni opravil v tem stolpcu.</div>
                             )}
