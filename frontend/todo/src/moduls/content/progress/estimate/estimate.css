@@ -1,0 +1,37 @@
+.estimate_card {
+    grid-column: 1 / -1;
+    background-color: #29282c;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.estimate_left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.estimate_title {
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+.estimate_value {
+    color: #f9fafb;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.estimate_sub {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
