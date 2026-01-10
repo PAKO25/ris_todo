@@ -9,7 +9,7 @@ import {
 import { get_user_todoListCache_all } from "../../cache/todoListCache.ts";
 import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
-import { isDone, getDoneDurationHours, collectEstimateInputs } from "./progress/estimate/estimate.ts";
+import { isDone, getDoneDurationHours, collectEstimateInputs, calculateEstimate } from "./progress/estimate/estimate.ts";
 
 type TaskTag = "low" | "medium" | "high";
 
@@ -220,7 +220,7 @@ function Content({ selectedListId }: ContentProps) {
     };
 
     useEffect(() => {
-        //samo testo za issue: (https://github.com/PAKO25/ris_todo/issues/4)
+        //samo testo za issue: (https://github.com/PAKO25/ris_todo/issues/4) in (https://github.com/PAKO25/ris_todo/issues/5)
         const mockItems = [
             { id: "1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T10:00:00.000Z" },
             { id: "2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T10:30:00.000Z" },
@@ -230,6 +230,10 @@ function Content({ selectedListId }: ContentProps) {
 
         const inputs = collectEstimateInputs(mockItems as any);
         console.log("MOCK estimate inputs:", inputs);
+
+        //(https://github.com/PAKO25/ris_todo/issues/5)
+        const result = calculateEstimate(mockItems as any);
+        console.log("MOCK estimate result:", result);
 
         if (selectedListId == null) {
             setColumns(baseColumns);

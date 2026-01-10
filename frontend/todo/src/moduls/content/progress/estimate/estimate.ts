@@ -44,3 +44,57 @@ export function collectEstimateInputs(items: AnyTodoItem[]) {
         durationsHours: durations,
     };
 }
+
+export type EstimateResult =
+    | {
+    ok: true;
+    avgTaskHours: number;
+    openCount: number;
+    totalHours: number;
+    daysWhole: number;
+    hoursModulo8: number;
+    daysDecimal: number;
+}
+    | {
+    ok: false;
+    reason: "NO_DONE_DATA" | "NO_OPEN_TASKS";
+    openCount: number;
+};
+
+export function calculateEstimate(items: AnyTodoItem[]): EstimateResult {
+    const { openCount, durationsHours } = collectEstimateInputs(items);
+
+    if (openCount === 0) {
+        return { ok: false, reason: "NO_OPEN_TASKS", openCount };
+    }
+
+    if (durationsHours.length === 0) {
+        return { ok: false, reason: "NO_DONE_DATA", openCount };
+    }
+
+    const avgTaskHours = durationsHours.reduce((s, x) => s + x, 0) / durationsHours.length;
+
+    const totalHours = avgTaskHours * openCount;
+
+    const daysDecimal = totalHours / 8;
+    const daysWhole = Math.floor(totalHours / 8);
+    const hoursModulo8 = Math.floor(totalHours % 8);
+
+    return {
+        ok: true,
+        avgTaskHours,
+        openCount,
+        totalHours,
+        daysWhole,
+        hoursModulo8,
+        daysDecimal,
+    };
+}
+
+export function formatEstimate(result: EstimateResult): string {
+    if (!result.ok) {
+        if (result.reason === "NO_OPEN_TASKS") return "0 dni 0 ur";
+        return "Ni dovolj podatkov (ni dokončanih nalog).";
+    }
+    return `${result.daysWhole} dni ${result.hoursModulo8} ur`;
+}
