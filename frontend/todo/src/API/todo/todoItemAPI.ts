@@ -58,6 +58,7 @@ export async function update_todo_item_api(
     data: {
         title?: string;
         description?: string;
+        isCompleted?: boolean;
         deadline?: string | null;
         kanbanLevel?: string;
         priority?: string;
@@ -77,5 +78,6 @@ export async function update_todo_item_api(
         throw new Error(text || "Napaka pri posodabljanju opravila");
     }
 
-    return await res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : ({} as TodoItemDTO);
 }

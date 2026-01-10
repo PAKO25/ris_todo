@@ -9,7 +9,7 @@ import {
 import { get_user_todoListCache_all } from "../../cache/todoListCache.ts";
 import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
-import { isDone, getDoneDurationHours} from "./progress/estimate/estimate.ts";
+import { isDone } from "./progress/estimate/estimate.ts";
 import Estimate from "./progress/estimate/Estimate.tsx";
 
 type TaskTag = "low" | "medium" | "high";
@@ -55,7 +55,7 @@ const priorityToTag = (priority: string | null | undefined): TaskTag => {
 const mapItemsToColumns = (todoItems: TodoItemDTO[]): Column[] => {
     if (import.meta.env.DEV) {
         console.log("first 5 done flags:", todoItems.slice(0, 5).map(isDone));
-        console.log("first 5 durations:", todoItems.slice(0, 5).map(getDoneDurationHours));
+
     }
 
     const cols: Column[] = baseColumns.map((c) => ({ ...c, tasks: [] }));
@@ -247,54 +247,9 @@ function Content({ selectedListId }: ContentProps) {
             setLoading(true);
             try {
                 const fetched = await get_todo_items_for_list(selectedListId);
-                //to je samo za test dokler ni vzpostavljeno z backendom
-                if (fetched.length === 0) {
-                    const mock: any[] = [
-                        // DONE: 6h
-                        { id: 1, title: "Done task 1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "HIGH" },
-                        // DONE: 4h
-                        { id: 2, title: "Done task 2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "LOW" },
-
-                        { id: 3, title: "Open 1", done: false, createdAt: "2026-01-10T11:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
-                        { id: 4, title: "Open 2", done: false, createdAt: "2026-01-10T12:00:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "MEDIUM" },
-                        { id: 5, title: "Open 3", done: false, createdAt: "2026-01-10T12:30:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
-                        { id: 6, title: "Open 4", done: false, createdAt: "2026-01-10T13:00:00.000Z", kanbanLevel: "TODO", priority: "HIGH" },
-                        { id: 7, title: "Open 5", done: false, createdAt: "2026-01-10T13:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "LOW" },
-                        { id: 8, title: "Open 6", done: false, createdAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
-                        { id: 9, title: "Open 7", done: false, createdAt: "2026-01-10T14:30:00.000Z", kanbanLevel: "REVIEW", priority: "MEDIUM" },
-                        { id: 10, title: "Open 8", done: false, createdAt: "2026-01-10T15:00:00.000Z", kanbanLevel: "TODO", priority: "LOW" },
-                        { id: 11, title: "Open 9", done: false, createdAt: "2026-01-10T15:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "HIGH" },
-                        { id: 12, title: "Open 10", done: false, createdAt: "2026-01-10T16:00:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
-                    ];
-
-                    applyItems(mock as TodoItemDTO[]);
-                } else {
-                    applyItems(fetched);
-                }
+                applyItems(fetched);
             } catch (e) {
-                if (import.meta.env.DEV) {
-                    const mock: any[] = [
-                        // DONE: 6h
-                        { id: 1, title: "Done task 1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "HIGH" },
-                        // DONE: 4h
-                        { id: 2, title: "Done task 2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "LOW" },
-
-                        { id: 3, title: "Open 1", done: false, createdAt: "2026-01-10T11:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
-                        { id: 4, title: "Open 2", done: false, createdAt: "2026-01-10T12:00:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "MEDIUM" },
-                        { id: 5, title: "Open 3", done: false, createdAt: "2026-01-10T12:30:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
-                        { id: 6, title: "Open 4", done: false, createdAt: "2026-01-10T13:00:00.000Z", kanbanLevel: "TODO", priority: "HIGH" },
-                        { id: 7, title: "Open 5", done: false, createdAt: "2026-01-10T13:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "LOW" },
-                        { id: 8, title: "Open 6", done: false, createdAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
-                        { id: 9, title: "Open 7", done: false, createdAt: "2026-01-10T14:30:00.000Z", kanbanLevel: "REVIEW", priority: "MEDIUM" },
-                        { id: 10, title: "Open 8", done: false, createdAt: "2026-01-10T15:00:00.000Z", kanbanLevel: "TODO", priority: "LOW" },
-                        { id: 11, title: "Open 9", done: false, createdAt: "2026-01-10T15:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "HIGH" },
-                        { id: 12, title: "Open 10", done: false, createdAt: "2026-01-10T16:00:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
-                    ];
-
-                    applyItems(mock as TodoItemDTO[]);
-                } else {
-                    applyItems([]);
-                }
+                applyItems([]);
             } finally {
                 setLoading(false);
             }
@@ -324,12 +279,17 @@ function Content({ selectedListId }: ContentProps) {
         event.preventDefault();
         if (!dragged) return;
 
+        const { taskId, fromColumnId } = dragged;
+        if (fromColumnId === toColumnId) {
+            setDragged(null);
+            setDragOverColumnId(null);
+            return;
+        }
+
         setColumns((prev) => {
-            const { taskId, fromColumnId } = dragged;
             const fromColumn = prev.find((c) => c.id === fromColumnId);
             const toColumn = prev.find((c) => c.id === toColumnId);
             if (!fromColumn || !toColumn) return prev;
-            if (fromColumnId === toColumnId) return prev;
 
             const fromTasks = [...fromColumn.tasks];
             const taskIndex = fromTasks.findIndex((t) => t.id === taskId);
@@ -343,6 +303,26 @@ function Content({ selectedListId }: ContentProps) {
                 if (col.id === toColumnId) return { ...col, tasks: toTasks };
                 return col;
             });
+        });
+
+        const isCompleted = toColumnId === "done";
+        const newKanbanLevel = columnIdToKanbanLevel(toColumnId);
+
+        setItems((prev) =>
+            prev.map((item) =>
+                item.id === taskId ? { ...item, kanbanLevel: newKanbanLevel, isCompleted } : item
+            )
+        );
+
+        const currentItem = items.find((i) => i.id === taskId);
+
+        update_todo_item_api(taskId, {
+            kanbanLevel: newKanbanLevel,
+            isCompleted,
+            priority: currentItem?.priority || "MEDIUM",
+        }).catch((err) => {
+            console.error("Failed to move task:", err);
+            // Optionally revert state here if needed
         });
 
         setDragged(null);
