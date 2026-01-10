@@ -9,6 +9,7 @@ import {
 import { get_user_todoListCache_all } from "../../cache/todoListCache.ts";
 import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
+import { isDone, getDoneDurationHours, collectEstimateInputs } from "./progress/estimate/estimate.ts";
 
 type TaskTag = "low" | "medium" | "high";
 
@@ -51,6 +52,9 @@ const priorityToTag = (priority: string | null | undefined): TaskTag => {
 };
 
 const mapItemsToColumns = (items: TodoItemDTO[]): Column[] => {
+    console.log("first 5 done flags:", items.slice(0, 5).map(isDone));//samo za mock test za issue: (https://github.com/PAKO25/ris_todo/issues/4)
+    console.log("first 5 durations:", items.slice(0, 5).map(getDoneDurationHours));//samo za mock test za issue: (https://github.com/PAKO25/ris_todo/issues/4)
+
     const cols: Column[] = baseColumns.map((c) => ({ ...c, tasks: [] }));
     const findCol = (id: ColumnId) => cols.find((c) => c.id === id)!;
 
@@ -216,6 +220,17 @@ function Content({ selectedListId }: ContentProps) {
     };
 
     useEffect(() => {
+        //samo testo za issue: (https://github.com/PAKO25/ris_todo/issues/4)
+        const mockItems = [
+            { id: "1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T10:00:00.000Z" },
+            { id: "2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T10:30:00.000Z" },
+            { id: "3", done: false, createdAt: "2026-01-10T11:00:00.000Z" },
+            { id: "4", done: false, createdAt: "2026-01-10T12:00:00.000Z" },
+        ];
+
+        const inputs = collectEstimateInputs(mockItems as any);
+        console.log("MOCK estimate inputs:", inputs);
+
         if (selectedListId == null) {
             setColumns(baseColumns);
             setActiveNewTaskColumn(null);
