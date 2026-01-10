@@ -4,5 +4,6 @@ public enum KanbanLevel {
     TODO,
     INPROGRESS,
     REVIEW,
-    COMPLETED
+    COMPLETED,
+    DONE
 }

@@ -18,7 +18,7 @@ export default function Estimate({ items }: Props) {
         if (!result.ok) return null;
 
         return `(${result.daysDecimal.toFixed(2)} dni • povp. ${result.avgTaskHours.toFixed(
-            2
+            1
         )} h/task • odprtih ${result.openCount})`;
     }, [items]);
 
@@ -30,6 +30,10 @@ export default function Estimate({ items }: Props) {
                 <div className="estimate_title">Ocena dokončanja</div>
                 <div className="estimate_value">{text}</div>
                 {details && <div className="estimate_sub">{details}</div>}
+            </div>
+            <div className="estimate_legend">
+                <div className="estimate_legend_item">High: 8h, Medium: 4h, Low: 2h</div>
+                <div className="estimate_legend_item">Delovni dan: 8h</div>
             </div>
         </section>
     );

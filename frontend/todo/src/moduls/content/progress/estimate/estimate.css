@@ -35,3 +35,16 @@
     font-size: 0.75rem;
     opacity: 0.9;
 }
+
+.estimate_legend {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.65rem;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+.estimate_legend_item {
+    white-space: nowrap;
+}
