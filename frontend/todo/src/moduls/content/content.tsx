@@ -9,7 +9,8 @@ import {
 import { get_user_todoListCache_all } from "../../cache/todoListCache.ts";
 import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
-import { isDone, getDoneDurationHours, collectEstimateInputs, calculateEstimate } from "./progress/estimate/estimate.ts";
+import { isDone, getDoneDurationHours} from "./progress/estimate/estimate.ts";
+import Estimate from "./progress/estimate/Estimate.tsx";
 
 type TaskTag = "low" | "medium" | "high";
 
@@ -51,14 +52,16 @@ const priorityToTag = (priority: string | null | undefined): TaskTag => {
     }
 };
 
-const mapItemsToColumns = (items: TodoItemDTO[]): Column[] => {
-    console.log("first 5 done flags:", items.slice(0, 5).map(isDone));//samo za mock test za issue: (https://github.com/PAKO25/ris_todo/issues/4)
-    console.log("first 5 durations:", items.slice(0, 5).map(getDoneDurationHours));//samo za mock test za issue: (https://github.com/PAKO25/ris_todo/issues/4)
+const mapItemsToColumns = (todoItems: TodoItemDTO[]): Column[] => {
+    if (import.meta.env.DEV) {
+        console.log("first 5 done flags:", todoItems.slice(0, 5).map(isDone));
+        console.log("first 5 durations:", todoItems.slice(0, 5).map(getDoneDurationHours));
+    }
 
     const cols: Column[] = baseColumns.map((c) => ({ ...c, tasks: [] }));
     const findCol = (id: ColumnId) => cols.find((c) => c.id === id)!;
 
-    items.forEach((item) => {
+    todoItems.forEach((item) => {
         let columnId: ColumnId;
 
         switch ((item.kanbanLevel || "").toUpperCase()) {
@@ -83,9 +86,7 @@ const mapItemsToColumns = (items: TodoItemDTO[]): Column[] => {
         let date: string | undefined;
         if (item.deadline) {
             const d = new Date(item.deadline);
-            if (!Number.isNaN(d.getTime())) {
-                date = d.toLocaleDateString("sl-SI");
-            }
+            if (!Number.isNaN(d.getTime())) date = d.toLocaleDateString("sl-SI");
         }
 
         const task: Task = {
@@ -101,6 +102,7 @@ const mapItemsToColumns = (items: TodoItemDTO[]): Column[] => {
 
     return cols;
 };
+
 
 const columnIdToKanbanLevel = (columnId: ColumnId): string => {
     switch (columnId) {
@@ -118,6 +120,7 @@ const columnIdToKanbanLevel = (columnId: ColumnId): string => {
 };
 
 function Content({ selectedListId }: ContentProps) {
+    const [items, setItems] = useState<TodoItemDTO[]>([]);
     const [columns, setColumns] = useState<Column[]>(baseColumns);
     const [dragged, setDragged] = useState<{ taskId: number; fromColumnId: ColumnId } | null>(null);
     const [dragOverColumnId, setDragOverColumnId] = useState<ColumnId | null>(null);
@@ -146,6 +149,11 @@ function Content({ selectedListId }: ContentProps) {
         const list = get_user_todoListCache_all().find((l) => l.id === selectedListId);
         if (list) pageTitle = list.title;
     }
+
+    const applyItems = (newItems: TodoItemDTO[]) => {
+        setItems(newItems);
+        setColumns(mapItemsToColumns(newItems));
+    };
 
     const resetNewTaskImage = () => {
         setNewTaskImageBase64(null);
@@ -220,22 +228,8 @@ function Content({ selectedListId }: ContentProps) {
     };
 
     useEffect(() => {
-        //samo testo za issue: (https://github.com/PAKO25/ris_todo/issues/4) in (https://github.com/PAKO25/ris_todo/issues/5)
-        const mockItems = [
-            { id: "1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T10:00:00.000Z" },
-            { id: "2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T10:30:00.000Z" },
-            { id: "3", done: false, createdAt: "2026-01-10T11:00:00.000Z" },
-            { id: "4", done: false, createdAt: "2026-01-10T12:00:00.000Z" },
-        ];
-
-        const inputs = collectEstimateInputs(mockItems as any);
-        console.log("MOCK estimate inputs:", inputs);
-
-        //(https://github.com/PAKO25/ris_todo/issues/5)
-        const result = calculateEstimate(mockItems as any);
-        console.log("MOCK estimate result:", result);
-
         if (selectedListId == null) {
+            setItems([]);
             setColumns(baseColumns);
             setActiveNewTaskColumn(null);
             setNewTaskTitle("");
@@ -244,14 +238,69 @@ function Content({ selectedListId }: ContentProps) {
             return;
         }
 
-        setLoading(true);
-        get_todo_items_for_list(selectedListId)
-            .then((items) => setColumns(mapItemsToColumns(items)))
-            .catch((err) => {
-                console.error("Napaka pri nalaganju opravil:", err);
-                setColumns(baseColumns);
-            })
-            .finally(() => setLoading(false));
+        setActiveNewTaskColumn(null);
+        setNewTaskTitle("");
+        resetNewTaskImage();
+        closeEditForm();
+
+        const run = async () => {
+            setLoading(true);
+            try {
+                const fetched = await get_todo_items_for_list(selectedListId);
+                //to je samo za test dokler ni vzpostavljeno z backendom
+                if (fetched.length === 0) {
+                    const mock: any[] = [
+                        // DONE: 6h
+                        { id: 1, title: "Done task 1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "HIGH" },
+                        // DONE: 4h
+                        { id: 2, title: "Done task 2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "LOW" },
+
+                        { id: 3, title: "Open 1", done: false, createdAt: "2026-01-10T11:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
+                        { id: 4, title: "Open 2", done: false, createdAt: "2026-01-10T12:00:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "MEDIUM" },
+                        { id: 5, title: "Open 3", done: false, createdAt: "2026-01-10T12:30:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
+                        { id: 6, title: "Open 4", done: false, createdAt: "2026-01-10T13:00:00.000Z", kanbanLevel: "TODO", priority: "HIGH" },
+                        { id: 7, title: "Open 5", done: false, createdAt: "2026-01-10T13:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "LOW" },
+                        { id: 8, title: "Open 6", done: false, createdAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
+                        { id: 9, title: "Open 7", done: false, createdAt: "2026-01-10T14:30:00.000Z", kanbanLevel: "REVIEW", priority: "MEDIUM" },
+                        { id: 10, title: "Open 8", done: false, createdAt: "2026-01-10T15:00:00.000Z", kanbanLevel: "TODO", priority: "LOW" },
+                        { id: 11, title: "Open 9", done: false, createdAt: "2026-01-10T15:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "HIGH" },
+                        { id: 12, title: "Open 10", done: false, createdAt: "2026-01-10T16:00:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
+                    ];
+
+                    applyItems(mock as TodoItemDTO[]);
+                } else {
+                    applyItems(fetched);
+                }
+            } catch (e) {
+                if (import.meta.env.DEV) {
+                    const mock: any[] = [
+                        // DONE: 6h
+                        { id: 1, title: "Done task 1", done: true, createdAt: "2026-01-10T08:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "HIGH" },
+                        // DONE: 4h
+                        { id: 2, title: "Done task 2", done: true, createdAt: "2026-01-10T10:00:00.000Z", doneAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "DONE", priority: "LOW" },
+
+                        { id: 3, title: "Open 1", done: false, createdAt: "2026-01-10T11:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
+                        { id: 4, title: "Open 2", done: false, createdAt: "2026-01-10T12:00:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "MEDIUM" },
+                        { id: 5, title: "Open 3", done: false, createdAt: "2026-01-10T12:30:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
+                        { id: 6, title: "Open 4", done: false, createdAt: "2026-01-10T13:00:00.000Z", kanbanLevel: "TODO", priority: "HIGH" },
+                        { id: 7, title: "Open 5", done: false, createdAt: "2026-01-10T13:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "LOW" },
+                        { id: 8, title: "Open 6", done: false, createdAt: "2026-01-10T14:00:00.000Z", kanbanLevel: "TODO", priority: "MEDIUM" },
+                        { id: 9, title: "Open 7", done: false, createdAt: "2026-01-10T14:30:00.000Z", kanbanLevel: "REVIEW", priority: "MEDIUM" },
+                        { id: 10, title: "Open 8", done: false, createdAt: "2026-01-10T15:00:00.000Z", kanbanLevel: "TODO", priority: "LOW" },
+                        { id: 11, title: "Open 9", done: false, createdAt: "2026-01-10T15:30:00.000Z", kanbanLevel: "IN_PROGRESS", priority: "HIGH" },
+                        { id: 12, title: "Open 10", done: false, createdAt: "2026-01-10T16:00:00.000Z", kanbanLevel: "REVIEW", priority: "LOW" },
+                    ];
+
+                    applyItems(mock as TodoItemDTO[]);
+                } else {
+                    applyItems([]);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        run();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedListId]);
 
@@ -499,7 +548,12 @@ function Content({ selectedListId }: ContentProps) {
             {selectedListId == null && <p className="content_hint">Izberi seznam v levem meniju.</p>}
             {loading && <p>Nalagam opravila...</p>}
 
-            {selectedListId !== null && (<Progress columns={columns} />)}
+            {selectedListId != null && (
+                <div className="kanban_top">
+                    <Progress columns={columns} />
+                    <Estimate items={items} />
+                </div>
+            )}
 
             {selectedListId != null &&
                 columns.map((column) => (
