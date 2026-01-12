@@ -513,6 +513,14 @@ function Content({ selectedListId }: ContentProps) {
         }
     };
 
+    const [focusedTaskId, setFocusedTaskId] = useState<string | number | null>(null);
+
+    const openFocus = (taskId: string | number) => {
+        setFocusedTaskId(taskId);
+        console.log(focusedTaskId);//test
+        //za naknadno implementacijo
+    };
+
     return (
         <div className="content">
             <header className="content_header">
@@ -797,9 +805,26 @@ function Content({ selectedListId }: ContentProps) {
                                         </div>
 
                                         <div className="task_footer">
-                                            <span className={getTagClassName(task.tag)}>{getTagLabel(task.tag)}</span>
-                                            {task.date && <span className="task_meta">{task.date}</span>}
+                                            <div className="task_footer_left">
+                                                <span className={getTagClassName(task.tag)}>{getTagLabel(task.tag)}</span>
+                                                {task.date && <span className="task_meta">{task.date}</span>}
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                className="task_focus_button"
+                                                onMouseDown={(e) => e.stopPropagation()}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openFocus(task.id);
+                                                }}
+                                                title="Fokus"
+                                                aria-label="Fokus"
+                                            >
+                                                Fokus
+                                            </button>
                                         </div>
+
                                     </article>
                                 </React.Fragment>
                             ))}
