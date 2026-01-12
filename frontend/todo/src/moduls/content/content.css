@@ -283,3 +283,34 @@
     margin-bottom: 12px;
 }
 
+.task_footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.task_footer_left{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.task_focus_button{
+    border: 1px solid rgba(0,0,0,0.12);
+    background: transparent;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.task_focus_button:hover{
+    background: rgba(0,0,0,0.04);
+}
+
+.task_focus_button:active{
+    transform: translateY(1px);
+}
