@@ -513,7 +513,8 @@ function Content({ selectedListId }: ContentProps) {
         }
     };
 
-    const [focusedTaskId, setFocusedTaskId] = useState<string | number | null>(null);
+    //focusedTaskId
+    const [setFocusedTaskId] = useState<string | number | null>(null);
 
     const openFocus = (taskId: string | number) => {
         setFocusedTaskId(taskId);
