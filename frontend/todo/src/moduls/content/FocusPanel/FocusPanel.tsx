@@ -65,13 +65,13 @@ export default function FocusPanel({
 
     const [running, setRunning] = useState(false);
     const [segmentIndex, setSegmentIndex] = useState(0);
-    const [secondsLeft, setSecondsLeft] = useState(plan[0]?.minutes * 60 ?? 0);
+    const [secondsLeft, setSecondsLeft] = useState(plan.length > 0 ? plan[0].minutes * 60 : 0);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setRunning(false);
         setSegmentIndex(0);
-        setSecondsLeft(plan[0]?.minutes * 60 ?? 0);
+        setSecondsLeft(plan.length > 0 ? plan[0].minutes * 60 : 0);
     }, [task.id, plan]);
 
 
