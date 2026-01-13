@@ -11,6 +11,8 @@ import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
 import { isDone } from "./progress/estimate/estimate.ts";
 import Estimate from "./progress/estimate/Estimate.tsx";
+import FocusPanel from "./FocusPanel/FocusPanel.tsx";
+
 
 type TaskTag = "low" | "medium" | "high";
 
@@ -513,13 +515,13 @@ function Content({ selectedListId }: ContentProps) {
         }
     };
 
-    const [focusedTaskId, setFocusedTaskId] = useState<string | number | null>(null);
+    const [focusedTask, setFocusedTask] = useState<any | null>(null);
 
-    const openFocus = (taskId: string | number) => {
-        setFocusedTaskId(taskId);
-        console.log(focusedTaskId);//test
-        //za naknadno implementacijo
+    const openFocus = (task: any) => {
+        setFocusedTask(task);
     };
+
+    const closeFocus = () => setFocusedTask(null);
 
     return (
         <div className="content">
@@ -816,7 +818,7 @@ function Content({ selectedListId }: ContentProps) {
                                                 onMouseDown={(e) => e.stopPropagation()}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    openFocus(task.id);
+                                                    openFocus(task);
                                                 }}
                                                 title="Fokus"
                                                 aria-label="Fokus"
@@ -834,6 +836,14 @@ function Content({ selectedListId }: ContentProps) {
                         </div>
                     </section>
                 ))}
+
+            {focusedTask && (
+                <FocusPanel
+                    task={focusedTask}
+                    onClose={closeFocus}
+                />
+            )}
+
         </div>
     );
 }
