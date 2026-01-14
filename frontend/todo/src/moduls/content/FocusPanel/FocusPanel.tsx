@@ -166,6 +166,12 @@ export default function FocusPanel({
                                     </div>
                                 ))}
                             </div>
+
+                            <div className="pomodoro_actions">
+                                <button type="button" className="pomodoro_btn pomodoro_btn_done" onClick={onClose}>
+                                    Done
+                                </button>
+                            </div>
                         </div>
 
                         <div className="focus_hint">ESC ali klik izven panela zapre.</div>
