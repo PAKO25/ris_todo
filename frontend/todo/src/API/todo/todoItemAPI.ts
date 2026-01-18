@@ -65,12 +65,18 @@ export async function update_todo_item_api(
         image?: string | null;
     }
 ): Promise<TodoItemDTO> {
+    // Map IN_PROGRESS to INPROGRESS for backend compatibility
+    let level = data.kanbanLevel;
+    if (level === "IN_PROGRESS") {
+        level = "INPROGRESS";
+    }
+
     const res = await fetch(`${API_BASE.replace('/lists', '/items')}/${itemId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, kanbanLevel: level, name: data.title }),
     });
 
     if (!res.ok) {
@@ -79,5 +85,17 @@ export async function update_todo_item_api(
     }
 
     const text = await res.text();
-    return text ? JSON.parse(text) : ({} as TodoItemDTO);
+    const json = text ? JSON.parse(text) : {};
+
+    // Ensure title is present (backend might return 'name' instead of 'title')
+    if (json.name && !json.title) {
+        json.title = json.name;
+    }
+
+    // Merge in case the server returns a partial object or empty response
+    return {
+        ...data,
+        ...json,
+        title: json.title || json.name || data.title
+    } as TodoItemDTO;
 }

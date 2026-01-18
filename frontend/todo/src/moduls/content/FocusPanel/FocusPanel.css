@@ -1,143 +1,556 @@
-.focus_overlay{
+/* Base Layout */
+.focus_overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    justify-content: flex-end;
-    z-index: 999;
+    background: #1a1a1a;
+    z-index: 9999;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Outfit', sans-serif;
+    /* Assuming existing font or system default */
+    overflow-y: auto;
 }
 
-.focus_panel{
-    width: 85%;
+/* Animations */
+.fade_in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.slide_up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Setup Container */
+.focus_setup_container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.focus_setup_left {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.focus_header_large h1 {
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.7;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.focus_hero_image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.setup_actions {
+    display: flex;
+    gap: 20px;
+    margin-top: auto;
+}
+
+.btn_primary_large {
+    background: #646cff;
+    color: white;
+    border: none;
+    padding: 18px 32px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn_primary_large:hover {
+    background: #535bf2;
+    transform: translateY(-2px);
+}
+
+.icon_arrow {
+    margin-left: 10px;
+    font-size: 1.2em;
+}
+
+.btn_secondary_large {
+    background: rgba(128, 128, 128, 0.1);
+    color: inherit;
+    border: none;
+    padding: 18px 32px;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn_secondary_large:hover {
+    background: rgba(128, 128, 128, 0.2);
+}
+
+/* Setup Right Side */
+.focus_setup_right {
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(100, 108, 255, 0.03), transparent);
+}
+
+.setup_card {
+    width: 100%;
+    max-width: 500px;
+}
+
+.setup_card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgba(100, 108, 255, 0.3);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.control_group {
+    margin-bottom: 30px;
+}
+
+.control_group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.range_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.range_wrapper input[type=range] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: #646cff;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.val_badge {
+    background: rgba(100, 108, 255, 0.1);
+    color: #646cff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.plan_preview {
+    margin-top: 40px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(128, 128, 128, 0.05);
+}
+
+.mini_plan_list {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.mini_dot {
+    width: 24px;
+    height: 8px;
+    border-radius: 4px;
+}
+
+.mini_dot.work {
+    background: #646cff;
+}
+
+.mini_dot.break {
+    background: #42b883;
+}
+
+.mini_more {
+    font-size: 0.8rem;
+    opacity: 0.5;
+    margin-left: 5px;
+}
+
+.total_duration_est {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+/* Running View */
+.focus_running_container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.running_hero_bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.4);
-    border-left: 1px solid rgba(0,0,0,0.12);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    z-index: -1;
+    filter: blur(20px);
+}
+
+.running_header {
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.running_header_content {
+    text-align: center;
+}
+
+.running_task_title {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.running_task_desc {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin-top: 4px;
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn_ghost {
+    background: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: inherit;
+    cursor: pointer;
+}
+
+.running_main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.running_task_details {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.running_task_image_container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 12px;
+    /* Slightly smaller radius for nested fit */
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+    /* Space from description */
+}
+
+.running_task_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.running_task_info_card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.focus_topbar{
-    padding: 12px 14px;
+.running_task_info_card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    color: #646cff;
+}
+
+.running_task_info_card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.timer_circle_container {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.focus_back, .focus_start{
-    border: 1px solid rgba(0,0,0,0.15);
-    background: rgba(0,0,0,0.9);
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-}
-
-.focus_start:disabled{
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.focus_content{
-    margin-top: 5%;
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 16px;
-    padding: 16px;
-    overflow: auto;
-    height: 100%;
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE/Edge legacy */
-}
-
-.focus_content::-webkit-scrollbar{
-    display: none;              /* Chrome/Safari */
-}
-
-.focus_title{ margin: 0 0 10px 0; }
-.focus_desc{ line-height: 1.45; opacity: 0.9; }
-
-.focus_image{
+.timer_display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
     width: 100%;
-    max-height: 320px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.08);
-    margin-top: 12px;
-}
-
-.pomodoro_card{
-    border: 1px solid rgba(0,0,0,0.12);
-    border-radius: 14px;
-    padding: 12px;
-}
-
-.pomodoro_header{
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer_label {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
     margin-bottom: 10px;
 }
 
-.pomodoro_label{ opacity: 0.8; font-size: 14px; }
-.pomodoro_time{ font-size: 32px; font-weight: 700; }
+.timer_value {
+    font-size: 5rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin-bottom: 20px;
+}
 
-.pomodoro_plan{
+.timer_controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn_circle {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: black;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    /* Clear default padding */
+    line-height: 1;
+    /* Center vertically better */
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn_circle:hover {
+    transform: scale(1.1);
+}
+
+.btn_circle.secondary {
+    background: rgba(128, 128, 128, 0.25);
+    color: white;
+    width: 62px;
+    height: 62px;
+}
+
+.progress_ring_circle {
+    transition: stroke-dashoffset 1s linear, stroke 0.3s;
+}
+
+.progress_ring_circle.work {
+    color: #646cff;
+}
+
+.progress_ring_circle.break {
+    color: #42b883;
+}
+
+/* Timeline */
+.plan_timeline {
+    height: 80vh;
+    border-left: 1px solid rgba(128, 128, 128, 0.1);
+    padding-left: 40px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
-.pomodoro_row{
-    display: grid;
-    grid-template-columns: 14px 1fr auto;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.08);
+.timeline_scroller {
+    margin-top: 10px;
+    overflow-y: auto;
+    padding: 20px 20px 40px 0;
+    /* Added top/bottom padding to prevent clipping */
+    flex: 1;
+    /* Hide scrollbar */
+    scrollbar-width: none;
 }
 
-.pomodoro_row.active{
-    background: rgba(0,0,0,0.04);
+.timeline_scroller::-webkit-scrollbar {
+    display: none;
 }
 
-.dot{
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    display: inline-block;
-    background: rgba(0,0,0,0.25);
-}
-.dot.work{ background: rgba(0,0,0,0.35); }
-.dot.break{ background: rgba(0,0,0,0.18); }
-
-.mins{ opacity: 0.7; }
-
-.focus_hint{
-    margin-top: 10%;
-    opacity: 0.7;
-    font-size: 12px;
-}
-
-.pomodoro_actions{
+.timeline_item {
     display: flex;
-    gap: 10px;
-    margin-top: 12px;
+    align-items: flex-start;
+    margin-bottom: 0;
+    opacity: 0.4;
+    transition: opacity 0.3s, transform 0.3s;
 }
 
-.pomodoro_btn{
-    border: 1px solid rgba(0,0,0,0.15);
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
+.timeline_item.active {
+    opacity: 1;
+    transform: scale(1.05);
+    /* Slight pop */
 }
 
-.pomodoro_btn:hover{
-    background: rgba(0,0,0,0.04);
+.timeline_item.past {
+    opacity: 0.2;
 }
 
-.pomodoro_btn_done{
-    margin-left: auto;
+.timeline_time {
+    width: 50px;
+    font-family: monospace;
+    text-align: right;
+    margin-right: 15px;
+    padding-top: 2px;
+    font-size: 0.9rem;
+}
+
+.timeline_dot_line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.timeline_dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(128, 128, 128, 0.5);
+    margin-bottom: 5px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.work .timeline_dot {
+    background: #646cff;
+}
+
+.break .timeline_dot {
+    background: #42b883;
+}
+
+.active .timeline_dot {
+    box-shadow: 0 0 15px currentColor;
+    transform: scale(1.2);
+}
+
+.timeline_line {
+    width: 2px;
+    height: 40px;
+    background: rgba(128, 128, 128, 0.1);
+}
+
+.timeline_content {
+    padding-top: 0;
+    padding-bottom: 30px;
+}
+
+.timeline_label {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Responsiveness */
+@media (max-width: 1000px) {
+    .focus_setup_container {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding-bottom: 40px;
+    }
+
+    .focus_setup_left {
+        padding: 40px 20px;
+        border-right: none;
+    }
+
+    .focus_setup_right {
+        padding: 20px;
+        background: none;
+    }
+
+    .running_main {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .plan_timeline {
+        height: auto;
+        border-left: none;
+        padding-left: 20px;
+    }
+
+    .timeline_scroller {
+        max-height: 300px;
+    }
 }

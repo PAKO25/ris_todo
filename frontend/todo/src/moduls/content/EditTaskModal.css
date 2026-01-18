@@ -1,0 +1,223 @@
+.edit_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+    backdrop-filter: blur(4px);
+}
+
+.edit_modal {
+    background: #1a1a1a;
+    width: 600px;
+    max-width: 95%;
+    max-height: 90vh;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #e0e0e0;
+    animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpModal {
+    from {
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.edit_modal_header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit_modal_title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.edit_modal_close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.edit_modal_close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.edit_modal_body {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form_label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form_input,
+.form_textarea,
+.form_select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form_input:focus,
+.form_textarea:focus,
+.form_select:focus {
+    outline: none;
+    border-color: #646cff;
+}
+
+.form_textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form_row_split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Image Upload Styling */
+.image_drop_area {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.image_drop_area.active {
+    border-color: #646cff;
+    background: rgba(100, 108, 255, 0.05);
+}
+
+.image_preview_container {
+    margin-top: 10px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.image_preview {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.image_remove_btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.image_upload_btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.image_upload_btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.image_hint {
+    font-size: 0.85rem;
+    opacity: 0.5;
+}
+
+.edit_modal_footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.btn_cancel {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn_save {
+    background: #646cff;
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn_save:hover {
+    background: #535bf2;
+}
+
+.btn_save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

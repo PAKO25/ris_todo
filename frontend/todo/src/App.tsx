@@ -2,6 +2,7 @@ import "./App.css";
 import Menu from "./moduls/menu/menu.tsx";
 import Content from "./moduls/content/content.tsx";
 import Homepage from "./moduls/homePage/homepage.tsx";
+import FocusPanel from "./moduls/content/FocusPanel/FocusPanel.tsx";
 
 import { is_logged_in } from "./cache/userCache.ts";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -9,6 +10,12 @@ import { useState } from "react";
 
 function BoardLayout() {
     const [selectedListId, setSelectedListId] = useState<number | null>(null);
+    const [pomodoroTask, setPomodoroTask] = useState<any | null>(null);
+    const isPomodoroOpen = !!pomodoroTask;
+
+    if (isPomodoroOpen) {
+        return <FocusPanel task={pomodoroTask} onClose={() => setPomodoroTask(null)} />;
+    }
 
     return (
         <div className="app">
@@ -16,7 +23,10 @@ function BoardLayout() {
                 selectedListId={selectedListId}
                 onSelectList={setSelectedListId}
             />
-            <Content selectedListId={selectedListId} />
+            <Content
+                selectedListId={selectedListId}
+                onOpenFocus={(task) => setPomodoroTask(task)}
+            />
         </div>
     );
 }

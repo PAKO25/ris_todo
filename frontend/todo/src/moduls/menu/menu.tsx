@@ -105,16 +105,19 @@ function Menu({ selectedListId, onSelectList }: MenuProps) {
         onSelectList(id);
     }
 
+    const [lists, setLists] = useState<todoList[]>(get_user_todoListCache_all());
+
     // ob mountu naložimo sezname iz backenda za prijavljenega userja
     useEffect(() => {
         if (!user) return;
 
         get_todo_lists_api(user.email)
             .then((apiLists: TodoListDTO[]) => {
-                const lists = apiLists.map(
+                const fetchedLists = apiLists.map(
                     (l) => new todoList(l.id, l.title, l.isShared, user)
                 );
-                set_user_todoListCache(lists);
+                set_user_todoListCache(fetchedLists);
+                setLists(fetchedLists);
             })
             .catch((e) => {
                 console.error("Napaka pri nalaganju seznamov:", e);
@@ -148,7 +151,7 @@ function Menu({ selectedListId, onSelectList }: MenuProps) {
                         </button>
                     </div>
                     <div className="todo_repo_list">
-                        {get_user_todoListCache_all().map((item, index) => (
+                        {lists.map((item, index) => (
                             <div
                                 key={item.id ?? index}
                                 onClick={() => handleSelectList(item.id)}

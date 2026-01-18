@@ -11,7 +11,8 @@ import jsPDF from "jspdf";
 import Progress from "./progress/progress.tsx";
 import { isDone } from "./progress/estimate/estimate.ts";
 import Estimate from "./progress/estimate/Estimate.tsx";
-import FocusPanel from "./FocusPanel/FocusPanel.tsx";
+import EditTaskModal from "./EditTaskModal.tsx";
+// FocusPanel logic moved to parent
 
 
 type TaskTag = "low" | "medium" | "high";
@@ -34,6 +35,7 @@ type Column = {
 
 type ContentProps = {
     selectedListId: number | null;
+    onOpenFocus: (task: any) => void;
 };
 
 const baseColumns: Column[] = [
@@ -121,7 +123,7 @@ const columnIdToKanbanLevel = (columnId: ColumnId): string => {
     }
 };
 
-function Content({ selectedListId }: ContentProps) {
+function Content({ selectedListId, onOpenFocus }: ContentProps) {
     const [items, setItems] = useState<TodoItemDTO[]>([]);
     const [columns, setColumns] = useState<Column[]>(baseColumns);
     const [dragged, setDragged] = useState<{ taskId: number; fromColumnId: ColumnId } | null>(null);
@@ -137,14 +139,8 @@ function Content({ selectedListId }: ContentProps) {
     const [isNewImageDropActive, setIsNewImageDropActive] = useState(false);
     const newTaskFileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
-    const [editingColumnId, setEditingColumnId] = useState<ColumnId | null>(null);
-    const [editTaskTitle, setEditTaskTitle] = useState("");
-    const [editTaskImage, setEditTaskImage] = useState<string | null>(null);
-    const [editTaskImageName, setEditTaskImageName] = useState<string | null>(null);
-    const [savingEditTask, setSavingEditTask] = useState(false);
-    const [isEditImageDropActive, setIsEditImageDropActive] = useState(false);
-    const editTaskFileInputRef = useRef<HTMLInputElement | null>(null);
+    const [editingTask, setEditingTask] = useState<TodoItemDTO | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     let pageTitle = "Kanban board";
     if (selectedListId != null) {
@@ -164,22 +160,14 @@ function Content({ selectedListId }: ContentProps) {
         if (newTaskFileInputRef.current) newTaskFileInputRef.current.value = "";
     };
 
-    const resetEditTaskImage = () => {
-        setEditTaskImage(null);
-        setEditTaskImageName(null);
-        setIsEditImageDropActive(false);
-        if (editTaskFileInputRef.current) editTaskFileInputRef.current.value = "";
-    };
+    // Removed unused resetEditTaskImage
 
     const closeEditForm = () => {
-        setEditingTaskId(null);
-        setEditingColumnId(null);
-        setEditTaskTitle("");
-        resetEditTaskImage();
+        setIsEditModalOpen(false);
+        setEditingTask(null);
     };
 
     const openNewTaskImagePicker = () => newTaskFileInputRef.current?.click();
-    const openEditTaskImagePicker = () => editTaskFileInputRef.current?.click();
 
     const loadFileAsBase64 = (
         file: File,
@@ -207,26 +195,12 @@ function Content({ selectedListId }: ContentProps) {
         loadFileAsBase64(file, (v) => setNewTaskImageBase64(v), (n) => setNewTaskImageName(n));
     };
 
-    const handleEditTaskImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        loadFileAsBase64(file, (v) => setEditTaskImage(v), (n) => setEditTaskImageName(n));
-    };
-
     const handleNewTaskImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         setIsNewImageDropActive(false);
         const file = e.dataTransfer.files?.[0];
         if (!file) return;
         loadFileAsBase64(file, (v) => setNewTaskImageBase64(v), (n) => setNewTaskImageName(n));
-    };
-
-    const handleEditTaskImageDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setIsEditImageDropActive(false);
-        const file = e.dataTransfer.files?.[0];
-        if (!file) return;
-        loadFileAsBase64(file, (v) => setEditTaskImage(v), (n) => setEditTaskImageName(n));
     };
 
     useEffect(() => {
@@ -319,9 +293,12 @@ function Content({ selectedListId }: ContentProps) {
         const currentItem = items.find((i) => i.id === taskId);
 
         update_todo_item_api(taskId, {
+            title: currentItem?.title,
+            description: currentItem?.description,
             kanbanLevel: newKanbanLevel,
             isCompleted,
             priority: currentItem?.priority || "MEDIUM",
+            image: currentItem?.image
         }).catch((err) => {
             console.error("Failed to move task:", err);
             // Optionally revert state here if needed
@@ -463,65 +440,60 @@ function Content({ selectedListId }: ContentProps) {
         }
     };
 
-    const startEditTask = (columnId: ColumnId, task: Task) => {
-        setActiveNewTaskColumn(null);
-        setNewTaskTitle("");
-        resetNewTaskImage();
-
-        setEditingTaskId(task.id);
-        setEditingColumnId(columnId);
-        setEditTaskTitle(task.title);
-
-        setEditTaskImage(task.image ?? null);
-        setEditTaskImageName(task.image ? "obstoječa_slika" : null);
-
-        if (editTaskFileInputRef.current) editTaskFileInputRef.current.value = "";
-    };
-
-    const handleUpdateTask = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (editingTaskId == null || editingColumnId == null) return;
-        if (!editTaskTitle.trim()) return;
-
-        try {
-            setSavingEditTask(true);
-
-            const dto = await update_todo_item_api(editingTaskId, {
-                title: editTaskTitle.trim(),
-                image: editTaskImage ?? undefined,
-            } as any);
-
-            const updatedTitle = (dto as any).title ?? editTaskTitle.trim();
-            const updatedImage = (dto as any).image ?? editTaskImage ?? undefined;
-
-            setColumns((prev) =>
-                prev.map((col) => {
-                    if (col.id !== editingColumnId) return col;
-                    return {
-                        ...col,
-                        tasks: col.tasks.map((t) =>
-                            t.id === editingTaskId ? { ...t, title: updatedTitle, image: updatedImage } : t
-                        ),
-                    };
-                })
-            );
-
-            closeEditForm();
-        } catch (err: unknown) {
-            console.error("Napaka pri posodabljanju opravila:", err);
-            alert(err || "Napaka pri posodabljanju opravila. Poskusi znova.");
-        } finally {
-            setSavingEditTask(false);
+    const startEditTask = async (task: Task) => {
+        // Need full DTO, find it in items
+        const fullItem = items.find(i => i.id === task.id);
+        if (fullItem) {
+            setEditingTask(fullItem);
+            setIsEditModalOpen(true);
         }
     };
 
-    const [focusedTask, setFocusedTask] = useState<any | null>(null);
+    const handleSaveEditTask = async (taskId: number, data: {
+        title: string;
+        description: string;
+        priority: string;
+        deadline: string | null;
+        image: string | null;
+        kanbanLevel: string;
+    }) => {
+        const dto = await update_todo_item_api(taskId, data);
 
-    const openFocus = (task: any) => {
-        setFocusedTask(task);
+        // Update local state
+        const tag = priorityToTag(dto.priority);
+        let date: string | undefined;
+        if (dto.deadline) {
+            const d = new Date(dto.deadline);
+            if (!Number.isNaN(d.getTime())) date = d.toLocaleDateString("sl-SI");
+        }
+
+        // Use data.image (what we sent) if server doesn't echo it back, or just fully trust dto if we are sure.
+        // For safety/smoothness with large base64, using the one we have is often better if DTO is partial.
+        // But assuming DTO is valid. The user reported image not rendering.
+        // If server returns null for image but we sent it, we lose it.
+        // Let's mix:
+        const finalImage = (dto as any).image ?? data.image ?? undefined;
+
+        // Merge with existing state to prevent data loss if API returns partial object
+        setItems(prev => prev.map(i => i.id === taskId ? { ...i, ...dto, title: dto.title || i.title, image: finalImage || i.image || null } : i));
+        setColumns(prev => prev.map(col => ({
+            ...col,
+            tasks: col.tasks.map(t => {
+                if (t.id === taskId) {
+                    return {
+                        ...t,
+                        title: dto.title || t.title,
+                        tag,
+                        date,
+                        image: finalImage || t.image
+                    };
+                }
+                return t;
+            })
+        })));
     };
 
-    const closeFocus = () => setFocusedTask(null);
+    // Focus state moved to parent
 
     return (
         <div className="content">
@@ -674,103 +646,12 @@ function Content({ selectedListId }: ContentProps) {
 
                             {column.tasks.map((task) => (
                                 <React.Fragment key={task.id}>
-                                    {editingTaskId === task.id && editingColumnId === column.id && (
-                                        <form className="task_new_form task_new_form--rows task_edit_form" onSubmit={handleUpdateTask}>
-                                            <div className="task_new_row">
-                                                <input
-                                                    type="text"
-                                                    className="task_new_input"
-                                                    placeholder="Naziv opravila..."
-                                                    value={editTaskTitle}
-                                                    onChange={(e) => setEditTaskTitle(e.target.value)}
-                                                    disabled={savingEditTask}
-                                                />
-                                            </div>
-
-                                            <input
-                                                ref={editTaskFileInputRef}
-                                                type="file"
-                                                accept="image/*"
-                                                style={{ display: "none" }}
-                                                onChange={handleEditTaskImageChange}
-                                            />
-
-                                            <div className="task_new_row">
-                                                <div
-                                                    className={
-                                                        "task_new_image_dropzone" +
-                                                        (isEditImageDropActive ? " task_new_image_dropzone--active" : "")
-                                                    }
-                                                    onDragOver={(e) => {
-                                                        e.preventDefault();
-                                                        setIsEditImageDropActive(true);
-                                                    }}
-                                                    onDragLeave={(e) => {
-                                                        if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) return;
-                                                        setIsEditImageDropActive(false);
-                                                    }}
-                                                    onDrop={handleEditTaskImageDrop}
-                                                >
-                                                    <div className="task_new_image_row">
-                                                        <button
-                                                            type="button"
-                                                            className="task_new_image_button"
-                                                            onClick={openEditTaskImagePicker}
-                                                            disabled={savingEditTask}
-                                                        >
-                                                            {editTaskImage ? "Zamenjaj sliko" : "Dodaj sliko"}
-                                                        </button>
-
-                                                        {editTaskImage && (
-                                                            <button
-                                                                type="button"
-                                                                className="task_new_image_remove"
-                                                                onClick={resetEditTaskImage}
-                                                                disabled={savingEditTask}
-                                                            >
-                                                                Odstrani
-                                                            </button>
-                                                        )}
-                                                    </div>
-
-                                                    {!editTaskImage ? (
-                                                        <div className="task_new_image_hint">
-                                                            Povleci sliko sem ali klikni “Dodaj sliko”.
-                                                        </div>
-                                                    ) : (
-                                                        <div className="task_new_image_preview">
-                                                            <div className="task_new_image_name">{editTaskImageName ?? "slika"}</div>
-                                                            <img
-                                                                src={editTaskImage}
-                                                                alt="Predogled"
-                                                                style={{
-                                                                    maxWidth: "100%",
-                                                                    maxHeight: "180px",
-                                                                    borderRadius: "8px",
-                                                                    marginTop: "8px",
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="task_new_row task_new_row--actions task_edit_actions">
-                                                <button type="button" className="task_new_button" onClick={closeEditForm} disabled={savingEditTask}>
-                                                    Prekliči
-                                                </button>
-                                                <button type="submit" className="task_new_button task_new_button--full" disabled={savingEditTask}>
-                                                    Posodobi
-                                                </button>
-                                            </div>
-                                        </form>
-                                    )}
 
                                     <article
                                         className={
                                             "task_card" + (dragged && dragged.taskId === task.id ? " task_card--dragging" : "")
                                         }
-                                        draggable={!(editingTaskId === task.id)}
+                                        draggable
                                         onDragStart={(event) => handleDragStart(event, task.id, column.id)}
                                         onDragEnd={handleDragEnd}
                                     >
@@ -797,7 +678,7 @@ function Content({ selectedListId }: ContentProps) {
                                                 onMouseDown={(e) => e.stopPropagation()}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    startEditTask(column.id, task);
+                                                    startEditTask(task);
                                                 }}
                                                 title="Uredi"
                                                 aria-label="Uredi"
@@ -818,7 +699,8 @@ function Content({ selectedListId }: ContentProps) {
                                                 onMouseDown={(e) => e.stopPropagation()}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    openFocus(task);
+                                                    const fullItem = items.find(i => i.id === task.id);
+                                                    if (fullItem) onOpenFocus(fullItem);
                                                 }}
                                                 title="Fokus"
                                                 aria-label="Fokus"
@@ -837,13 +719,12 @@ function Content({ selectedListId }: ContentProps) {
                     </section>
                 ))}
 
-            {focusedTask && (
-                <FocusPanel
-                    task={focusedTask}
-                    onClose={closeFocus}
-                />
-            )}
-
+            <EditTaskModal
+                isOpen={isEditModalOpen}
+                onClose={closeEditForm}
+                onSave={handleSaveEditTask}
+                task={editingTask}
+            />
         </div>
     );
 }
