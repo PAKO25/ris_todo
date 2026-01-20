@@ -10,12 +10,13 @@ Pregledna in enostavna spletna aplikacija za upravljanje z opravili, razvita v s
    - [Podatkovna baza](#32-podatkovna-baza)
    - [Backend](#33-backend)
    - [Frontend](#34-frontend)
+   - [Okoljske spremenljivke in konfiguracija](#35-okoljske-spremenljivke-in-konfiguracija)
 4. [Dokumentacija za razvijalce](#4-dokumentacija-za-razvijalce)
    - [Uporabljene tehnologije](#41-uporabljene-tehnologije)
    - [Struktura projekta](#42-struktura-projekta)
    - [Standardi kodiranja](#43-standardi-kodiranja)
 5. [Navodila za prispevanje](#5-navodila-za-prispevanje)
-6. [Usecase diagram](#6-usecase-diagram)
+6. [Usecase diagram](#6-use-case-diagram)
 7. [Class diagram](#7-class-diagram)
 8. [Dodana funkcionalnost: izvoz seznama v PDF](#8-dodana-funkcionalnost-izvoz-seznama-v-pdf)
 
@@ -137,6 +138,23 @@ Prepričajte se, da imate nameščeno naslednjo programsko opremo:
     ```
 4.  Aplikacija bo dostopna v brskalniku na naslovu, ki ga izpiše Vite (običajno `http://localhost:5173`).
 
+### 3.5. Okoljske spremenljivke in konfiguracija
+
+Aplikacija uporablja datoteko `application.properties`, ki se nahaja v `backend/todo/src/main/resources/`. Za pravilno delovanje v lokalnem okolju zagotovite, da se nastavitve ujemajo z vašo konfiguracijo MySQL strežnika.
+
+**Ključne nastavitve:**
+
+| Lastnost | Vrednost v projektu | Opis |
+| :--- | :--- | :--- |
+| `server.port` | `8180` | Vrata, na katerih teče backend API. |
+| `server.servlet.context-path` | `/api/v1` | Osnovna pot (prefix) za vse API končne točke. |
+| `spring.datasource.url` | `jdbc:mysql://localhost:3306/todo_ris` | Povezava do baze (preverite port 3306 in ime baze). |
+| `spring.datasource.username` | `todo_backend` | Uporabniško ime, nastavljeno v bazi. |
+| `spring.datasource.password` | `geslo123` | Geslo za dostop do baze - nujno spremenite iz privzetega |
+
+> [!IMPORTANT]
+> Če spreminjate `server.port` ali `server.servlet.context-path`, morate ustrezno posodobiti tudi proxy nastavitve v frontend delu (`vite.config.ts`), da bo komunikacija med deli aplikacije še naprej delovala.
+
 ---
 
 ## 4. Dokumentacija za razvijalce
@@ -163,26 +181,34 @@ Projekt je organiziran v ločeni mapi za frontend in backend, kar omogoča neodv
 
 ```
 .
-├── backend/                  # Mapa za Spring Boot aplikacijo
-│   └── todo/                 # Izvorna koda backenda
-├── frontend/                 # Mapa za Vue.js aplikacijo
-│   └── todo/                 # Izvorna koda frontenda
+├── backend/todo/             # Spring Boot aplikacija
+│   ├── src/main/java/.../    # Java izvorna koda (Controller, Service, Repository, Model)
+│   ├── src/main/resources/   # Konfiguracijske datoteke (application.properties)
+│   └── pom.xml               # Maven konfiguracija in odvisnosti
+├── frontend/todo/            # React + TypeScript aplikacija
+│   ├── src/components/       # Večkrat uporabljene UI komponente
+│   ├── src/pages/            # Glavni pogledi aplikacije (Login, Kanban board)
+│   ├── src/hooks/            # Custom React hooki za logiko
+│   └── package.json          # Seznam frontend odvisnosti in skript
 ├── sql_setup.sql             # Skripta za inicializacijo baze
-└── README.md                 # Ta datoteka
+└── README.md                 # Dokumentacija projekta
 ```
 
 ### 4.3. Standardi kodiranja
 
 - **Git & Branching**:
-  - `main` veja je zaščitena in predstavlja stabilno različico.
+  - `main` veja je zaščitena in predstavlja stabilno različico. Direktno potiskanje v `main` ni dovoljeno.
   - Za vsako novo funkcionalnost ali popravek ustvarite novo vejo iz `main`.
   - Ime veje naj sledi formatu `tip/kratek-opis` (npr. `feature/user-authentication` ali `fix/login-bug`).
+  - Pred združitvijo v `main` je obvezen Pull Request in pregled s strani drugega člana (skupinsko lastništvo).
 - **Commit sporočila**:
-  - Pišite jih v angleščini.
-  - Sledite formatu `tip: opis` (npr. `feat: Add user login endpoint`, `docs: Update README installation guide`).
+  - Sledite *de facto* standardu *Conventional Commits* za boljšo preglednost.
+  - Pišite jih v angleščini v sedanjiku.
+  - Sledite formatu `tip: opis` (npr. `feat: add user login endpoint`, `fix: resolve crash on startup`, `docs: update setup instructions`).
 - **Koda**:
-  - **Java**: Sledite standardnim [Java kodirnim konvencijam](https://www.oracle.com/technetwork/java/codeconventions-150003.pdf). Uporabljajte smiselna in opisna imena za spremenljivke in metode.
-  - **Vue**: Uporabljajte priporočila iz uradne Vue dokumentacije in sledite strukturi, ki jo generira Vite. Imena komponent naj bodo v formatu `PascalCase`.
+  - **Java (Backend)**: Sledite *de jure* [Java kodirnim konvencijam](https://www.oracle.com/technetwork/java/codeconventions-150003.pdf). Uporabljajte smiselna in opisna imena v angleščini. Razredi naj bodo v `PascalCase`, metode in spremenljivke pa v `camelCase`.
+  - **React & TypeScript (Frontend)**: Uporabljajte priporočila iz [Googlovih stilskih konvencij](https://google.github.io/styleguide/tsguide.html) (*de facto* standard) in sledite strukturi, ki jo generira Vite.
+  - **Komponente in stili**: Imena komponent naj bodo v formatu `PascalCase` (npr. `UserProfile.tsx`). Uporabljajte funkcijske komponente in React Hooke.
 
 ---
 
