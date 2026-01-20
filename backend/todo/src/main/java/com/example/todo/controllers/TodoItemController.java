@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/items")
+@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Todo Item Controller", description = "Controller for todo item operations")
 public class TodoItemController {
 
